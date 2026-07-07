@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ 🪽 推し活応援ジェネレーター 🪽 ✨</title>
+    <style>
+        /* 💡 ラベンダー＆天使モチーフのリッチデザイン */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+            background: linear-gradient(135deg, #f4effa 0%, #e3d7f0 100%); 
+            margin: 0; 
+            padding: 40px 20px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        
+        .container { 
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 35px 25px; 
+            border-radius: 24px; 
+            box-shadow: 0 20px 60px rgba(138, 99, 190, 0.15); 
+            width: 100%; 
+            max-width: 480px; 
+            box-sizing: border-box; 
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: "🪽";
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 90px;
+            opacity: 0.06;
+            transform: rotate(-15deg);
+            pointer-events: none;
+        }
+        
+        h1 { 
+            font-size: 19px; 
+            margin-top: 0;
+            margin-bottom: 20px; 
+            text-align: center; 
+            background: linear-gradient(135deg, #8a63be 0%, #b397dc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800; 
+            letter-spacing: 0.05em;
+        }
+
+        /* 💡 設定から自動反映される「インフォメーション枠」 */
+        .info-box {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid #e8e2f2;
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            color: #5d4f6c;
+            line-height: 1.6;
+        }
+        .info-box div { display: flex; margin-bottom: 4px; }
+        .info-box div:last-child { margin-bottom: 0; }
+        .info-label { font-weight: bold; color: #8a63be; width: 85px; shrink: 0; }
+        .info-value { color: #4a3e56; word-break: break-all; }
+        .btn-video-link {
+            display: inline-block;
+            margin-top: 8px;
+            color: #ffffff;
+            background: #ff0055; /* YouTube/動画を意識したアクセントカラー */
+            text-decoration: none;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(255, 0, 85, 0.2);
+        }
+        
+        .form-group { margin-bottom: 22px; }
+        
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: bold; 
+            color: #635375; 
+            font-size: 13px; 
+        }
+        
+        input[type="text"] { 
+            width: 100%; 
+            padding: 14px; 
+            border: 1px solid #d3c5e5; 
+            border-radius: 12px; 
+            font-size: 15px; 
+            box-sizing: border-box; 
+            transition: all 0.3s ease; 
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #4a3e56;
+        }
+        input[type="text"]:focus { 
+            border-color: #8a63be; 
+            box-shadow: 0 0 0 4px rgba(138, 99, 190, 0.15);
+            outline: none; 
+        }
+        
+        .checkbox-label { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            cursor: pointer; 
+            font-size: 13px; 
+            color: #5d4f6c; 
+            margin-top: 12px; 
+        }
+        .checkbox-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #8a63be; 
+            cursor: pointer;
+        }
+        
+        .preview-title { 
+            font-size: 12px; 
+            color: #635375; 
+            font-weight: bold; 
+            margin-top: 25px; 
+            margin-bottom: 6px; 
+        }
+        .preview-box { 
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px dashed #c0b0d8; 
+            border-radius: 14px; 
+            padding: 16px; 
+            font-size: 14px; 
+            color: #4a3e56; 
+            white-space: pre-wrap; 
+            word-break: break-all; 
+            min-height: 60px; 
+            line-height: 1.6; 
+        }
+        .counter { text-align: right; font-size: 11px; color: #8e7f9e; margin-top: 6px; font-weight: 500; }
+        .counter.error { color: #f4212e; font-weight: bold; }
+
+        .btn-copy { 
+            width: 100%;
+            background: #ffffff; 
+            color: #8a63be; 
+            border: 1px solid #dfd3f0; 
+            border-radius: 12px; 
+            padding: 11px; 
+            font-size: 13px; 
+            font-weight: 600; 
+            margin-top: 10px; 
+            box-shadow: 0 4px 12px rgba(138, 99, 190, 0.05);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .btn-copy:hover {
+            background: #fdfbff;
+            border-color: #b397dc;
+        }
+        
+        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; }
+        .btn-row { display: flex; gap: 14px; }
+        button.action-btn { 
+            flex: 1; 
+            padding: 15px; 
+            border: none; 
+            border-radius: 9999px; 
+            font-size: 14px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        button.action-btn:active { transform: scale(0.96); }
+        
+        .btn-post { 
+            background: linear-gradient(135deg, #b599e2 0%, #8a63be 100%); 
+            color: white; 
+            box-shadow: 0 6px 20px rgba(138, 99, 190, 0.3);
+        }
+        .btn-post:hover { box-shadow: 0 8px 24px rgba(138, 99, 190, 0.45); }
+        
+        .btn-dm { 
+            background: linear-gradient(135deg, #5c4d70 0%, #413552 100%); 
+            color: white; 
+            box-shadow: 0 6px 20px rgba(65, 53, 82, 0.2);
+        }
+        .btn-dm:hover { box-shadow: 0 8px 24px rgba(65, 53, 82, 0.35); }
+        
+        .toast { 
+            display: none; 
+            text-align: center; 
+            background-color: #8a63be; 
+            color: white; 
+            padding: 12px; 
+            border-radius: 12px; 
+            font-size: 13px; 
+            margin-top: 12px; 
+            animation: fadeIn 0.3s ease; 
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>✨ 🪽 推し活応援ジェネレーター 🪽 ✨</h1>
+    
+    <div class="info-box">
+        <div><span class="info-label">応援対象：</span><span class="info-value" id="infoStreamer"></span></div>
+        <div><span class="info-label">投票楽曲：</span><span class="info-value" id="infoSong"></span></div>
+        <div><span class="info-label">投票締切：</span><span class="info-value" id="infoDeadline" style="color:#f4212e; font-weight:bold;"></span></div>
+        <a id="infoVideoBtn" class="btn-video-link" target="_blank" style="display:none;">🎬 対象動画を再生する</a>
+    </div>
+    
+    <div class="form-group">
+        <label for="userMessage">自由入力メッセージ（熱い思いなど自由に変えられます） 👼：</label>
+        <input type="text" id="userMessage" placeholder="例: 最高にかわいい曲です！一票お願いします！" oninput="updatePreview()">
+    </div>
+
+    <div class="form-group">
+        <label class="checkbox-label">
+            <input type="checkbox" id="includeUrl" checked onchange="updatePreview()"> 最後にこのサイトのURLを追加する
+        </label>
+    </div>
+
+    <div class="preview-title">投稿文章のプレビュー：</div>
+    <div class="preview-box" id="previewText"></div>
+    <div class="counter" id="charCounter">0 / 140文字</div>
+    
+    <button class="btn-copy" onclick="copyToClipboard()">📋 文章をクリップボードにコピー</button>
+    <div class="toast" id="toastMessage">文章をコピーしました！Xに手動で貼ることもできます。</div>
+
+    <div class="btn-group">
+        <div class="btn-row">
+            <button class="action-btn btn-post" onclick="shareToX('post')">Xにポスト 🪽</button>
+            <button class="action-btn btn-dm" onclick="shareToX('dm')">DMを送る ✉️</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ========================================================
+// ⚙️ ★超一元管理設定エリア★（次回からはここだけ書き換えてください）
+// ========================================================
+const CONFIG = {
+    streamerName: '夢羽ヒメ',             // 活動者名
+    songTitle: '彩光 -イリザシオン-',          // 曲名
+    videoUrl: 'https://youtu.be/Kaowp9KvnTo?si=-9hz87M4dlUBT8dO',   // 動画URL（無い場合は空欄 '' にするとボタンが消えます）
+    deadline: '8月25日(火) 23:59まで',     // 締め切り
+    
+    // イベント共通設定
+    titleHeader: '【ミューコミVR 楽曲ランキング投票】\n',
+    additionalHashtag: '#ミューコミVR #VTuber楽曲ランキング #夢羽ヒメ',    // 番組などの固定ハッシュタグ
+    recipientId: '100786821'                        // DMを固定したい相手の数値ID（空欄でも可）
+};
+// ========================================================
+
+// ページ読み込み時に設定情報を画面に反映する
+function initSite() {
+    document.getElementById('infoStreamer').innerText = CONFIG.streamerName;
+    document.getElementById('infoSong').innerText = CONFIG.songTitle;
+    document.getElementById('infoDeadline').innerText = CONFIG.deadline;
+    
+    const videoBtn = document.getElementById('infoVideoBtn');
+    if (CONFIG.videoUrl) {
+        videoBtn.href = CONFIG.videoUrl;
+        videoBtn.style.display = 'inline-block';
+    } else {
+        videoBtn.style.display = 'none';
+    }
+    
+    updatePreview();
+}
+
+// Xに送信するテキストを自動組み立てする関数
+function generateText() {
+    let text = CONFIG.titleHeader;
+    
+    // 設定された変数を自動で組み込む
+    text += `投票先：${CONFIG.streamerName}\n`;
+    text += `投票曲：${CONFIG.songTitle}\n`;
+    
+    if (CONFIG.videoUrl) {
+        text += `動画：${CONFIG.videoUrl}\n`;
+    }
+    
+    // ユーザーが自由に入力したメッセージがあれば挟む
+    const userMessage = document.getElementById('userMessage').value;
+    if (userMessage) {
+        text += `\n${userMessage}\n`;
+    }
+    
+    // 締め切り情報を追加
+    text += `\n締切：${CONFIG.deadline}\n`;
+    
+    // サイトURL（自動取得）
+    const includeUrl = document.getElementById('includeUrl').checked;
+    if (includeUrl) {
+        text += `投票サイト：${window.location.href}`;
+    }
+    
+    // ハッシュタグ（固定のもの ＋ 活動者名のハッシュタグを自動生成）
+    text += `\n${CONFIG.additionalHashtag} #${CONFIG.streamerName}`;
+    
+    return text;
+}
+
+function updatePreview() {
+    const finalText = generateText();
+    document.getElementById('previewText').innerText = finalText;
+    
+    const len = finalText.length;
+    const counterEl = document.getElementById('charCounter');
+    counterEl.innerText = `${len} / 140文字`;
+    
+    if (len > 140) {
+        counterEl.classList.add('error');
+    } else {
+        counterEl.classList.remove('error');
+    }
+}
+
+function copyToClipboard() {
+    const text = generateText();
+    navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toastMessage');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    });
+}
+
+function shareToX(type) {
+    const finalText = generateText();
+    const encodedText = encodeURIComponent(finalText);
+    let xUrl = '';
+    
+    if (type === 'post') {
+        xUrl = `https://x.com/intent/post?text=${encodedText}`;
+    } else if (type === 'dm') {
+        xUrl = `https://x.com/messages/compose?text=${encodedText}`;
+        if (CONFIG.recipientId) {
+            xUrl += `&recipient_id=${CONFIG.recipientId}`;
+        }
+    }
+    
+    window.open(xUrl, '_blank');
+}
+
+// 起動処理
+window.onload = initSite;
+</script>
+
+</body>
+</html>
