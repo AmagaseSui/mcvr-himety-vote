@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ 🪽 推し活応援ジェネレーター 🪽 ✨</title>
+    <title></title>
     <style>
         /* 💡 ラベンダー＆天使モチーフのリッチデザイン */
         body { 
@@ -12,7 +12,7 @@
             margin: 0; 
             padding: 40px 20px; 
             display: flex; 
-            justify-content: center; 
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
             box-sizing: border-box;
@@ -31,6 +31,7 @@
             border: 1px solid rgba(255, 255, 255, 0.6);
             position: relative;
             overflow: hidden;
+            margin-bottom: 30px; /* フッターとの間隔 */
         }
 
         .container::before {
@@ -56,7 +57,7 @@
             letter-spacing: 0.05em;
         }
 
-        /* 💡 設定から自動反映される「インフォメーション枠」 */
+        /* 設定から自動反映されるインフォメーション枠 */
         .info-box {
             background: rgba(255, 255, 255, 0.5);
             border: 1px solid #e8e2f2;
@@ -69,13 +70,13 @@
         }
         .info-box div { display: flex; margin-bottom: 4px; }
         .info-box div:last-child { margin-bottom: 0; }
-        .info-label { font-weight: bold; color: #8a63be; width: 85px; shrink: 0; }
+        .info-label { font-weight: bold; color: #8a63be; width: 85px; flex-shrink: 0; }
         .info-value { color: #4a3e56; word-break: break-all; }
         .btn-video-link {
             display: inline-block;
             margin-top: 8px;
             color: #ffffff;
-            background: #ff0055; /* YouTube/動画を意識したアクセントカラー */
+            background: #ff0055; 
             text-decoration: none;
             padding: 4px 12px;
             border-radius: 999px;
@@ -84,7 +85,7 @@
             box-shadow: 0 2px 6px rgba(255, 0, 85, 0.2);
         }
         
-        .form-group { margin-bottom: 22px; }
+        .form-group { margin-bottom: 20px; }
         
         label { 
             display: block; 
@@ -111,6 +112,12 @@
             outline: none; 
         }
         
+        .checkbox-group {
+            background: rgba(255, 255, 255, 0.4);
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 1px solid #e8e2f2;
+        }
         .checkbox-label { 
             display: flex; 
             align-items: center; 
@@ -118,7 +125,7 @@
             cursor: pointer; 
             font-size: 13px; 
             color: #5d4f6c; 
-            margin-top: 12px; 
+            margin: 6px 0;
         }
         .checkbox-label input[type="checkbox"] {
             width: 16px;
@@ -163,10 +170,7 @@
             transition: all 0.2s ease;
             cursor: pointer;
         }
-        .btn-copy:hover {
-            background: #fdfbff;
-            border-color: #b397dc;
-        }
+        .btn-copy:hover { background: #fdfbff; border-color: #b397dc; }
         
         .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; }
         .btn-row { display: flex; gap: 14px; }
@@ -207,13 +211,34 @@
             margin-top: 12px; 
             animation: fadeIn 0.3s ease; 
         }
+        
+        /* 📋 フッター（非公式注釈エリア） */
+        .footer-notice {
+            max-width: 480px;
+            width: 100%;
+            font-size: 11px;
+            color: #7d6e8d;
+            line-height: 1.6;
+            text-align: center;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        .footer-notice a {
+            color: #8a63be;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .footer-notice a:hover {
+            text-decoration: underline;
+        }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>✨ 🪽 推し活応援ジェネレーター 🪽 ✨</h1>
+    <h1 id="siteMainTitle"></h1>
     
     <div class="info-box">
         <div><span class="info-label">応援対象：</span><span class="info-value" id="infoStreamer"></span></div>
@@ -228,9 +253,15 @@
     </div>
 
     <div class="form-group">
-        <label class="checkbox-label">
-            <input type="checkbox" id="includeUrl" checked onchange="updatePreview()"> 最後にこのサイトのURLを追加する
-        </label>
+        <label>投稿オプション：</label>
+        <div class="checkbox-group">
+            <label class="checkbox-label">
+                <input type="checkbox" id="includeDate" onchange="toggleOption('includeDate')"> 先頭に今日の日付を追加する
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="includeUrl" onchange="toggleOption('includeUrl')"> 末尾にこのサイトのURLを追加する
+            </label>
+        </div>
     </div>
 
     <div class="preview-title">投稿文章のプレビュー：</div>
@@ -248,25 +279,33 @@
     </div>
 </div>
 
+<footer class="footer-notice" id="footerNotice"></footer>
+
 <script>
 // ========================================================
 // ⚙️ ★超一元管理設定エリア★（次回からはここだけ書き換えてください）
 // ========================================================
 const CONFIG = {
-    streamerName: '夢羽ヒメ',             // 活動者名
-    songTitle: '彩光 -イリザシオン-',          // 曲名
-    videoUrl: 'https://youtu.be/Kaowp9KvnTo?si=-9hz87M4dlUBT8dO',   // 動画URL（無い場合は空欄 '' にするとボタンが消えます）
-    deadline: '8月25日(火) 23:59まで',     // 締め切り
-    
-    // イベント共通設定
-    titleHeader: '【ミューコミVR 楽曲ランキング投票】\n',
-    additionalHashtag: '#ミューコミVR #VTuber楽曲ランキング #夢羽ヒメ',    // 番組などの固定ハッシュタグ
-    recipientId: '100786821'                        // DMを固定したい相手の数値ID（空欄でも可）
+    streamerName: '夢羽ヒメ',                               // *streamerName*
+    songTitle: '彩光 -イリザシオン-',                            // *SongTitle*
+    videoUrl: 'https://youtu.be/Kaowp9KvnTo?si=-9hz87M4dlUBT8dO',                     // *videoURL*
+    deadline: '8月25日(火) 23:59まで',                       // 締め切り
+    additionalHashtag: '#ミューコミVR #VTuber楽曲ランキング #夢羽ヒメ',           // *additionalHashtag*
+    recipientId: '100786821'                                          // DMの宛先数値ID（空欄でも可）
 };
 // ========================================================
 
-// ページ読み込み時に設定情報を画面に反映する
+// グローバル変数で今日の日付（日本時間 yyyy/MM/dd）を保持
+let currentDateStr = '';
+
+// ページ読み込み時の初期化処理
 function initSite() {
+    // 1. ページタイトルと見出しを設定
+    const pageTitle = `${CONFIG.streamerName}ミューコミVR投票サイト`;
+    document.title = pageTitle;
+    document.getElementById('siteMainTitle').innerText = `✨ 🪽 ${pageTitle} 🪽 ✨`;
+    
+    // 2. インフォメーション枠の設定
     document.getElementById('infoStreamer').innerText = CONFIG.streamerName;
     document.getElementById('infoSong').innerText = CONFIG.songTitle;
     document.getElementById('infoDeadline').innerText = CONFIG.deadline;
@@ -279,38 +318,78 @@ function initSite() {
         videoBtn.style.display = 'none';
     }
     
+    // 3. フッターの免責事項を自動生成
+    document.getElementById('footerNotice').innerHTML = 
+        `当サイトはファンが運営する非公式サイトであり、${CONFIG.streamerName}様、およびミューコミVR様とは一切関係ございません。` +
+        `関係各所へのご迷惑とならないようご配慮をお願いいたします。当サイトに関するお問い合わせは、` +
+        `<a href="https://x.com/amgs_lvhmt" target="_blank">@amgs_lvhmt</a> までお願いいたします。`;
+
+    // 4. 日本時間(JST)で今日の「yyyy/MM/dd」を取得して変数に保持
+    const now = new Date();
+    currentDateStr = now.toLocaleDateString('ja-JP', {
+        timeZone: 'Asia/Tokyo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+
+    // 5. キャッシュ（localStorage）からチェックボックスの状態を読み込む（無い場合はデフォルトtrue）
+    initCheckbox('includeDate', true);
+    initCheckbox('includeUrl', true);
+    
     updatePreview();
 }
 
-// Xに送信するテキストを自動組み立てする関数
+// チェックボックスの初期状態を設定する関数
+function initCheckbox(id, defaultValue) {
+    const saved = localStorage.getItem(id);
+    const checkbox = document.getElementById(id);
+    if (saved !== null) {
+        checkbox.checked = (saved === 'true');
+    } else {
+        checkbox.checked = defaultValue;
+    }
+}
+
+// チェックボックスが切り替わったときにキャッシュに保存する関数
+function toggleOption(id) {
+    const checkbox = document.getElementById(id);
+    localStorage.setItem(id, checkbox.checked);
+    updatePreview();
+}
+
+// 指定されたフォーマットでXのテキストを組み立てる関数
 function generateText() {
-    let text = CONFIG.titleHeader;
+    let text = '';
     
-    // 設定された変数を自動で組み込む
-    text += `投票先：${CONFIG.streamerName}\n`;
-    text += `投票曲：${CONFIG.songTitle}\n`;
-    
-    if (CONFIG.videoUrl) {
-        text += `動画：${CONFIG.videoUrl}\n`;
+    // 1. 今日の日付（チェックONの場合のみ）
+    const includeDate = document.getElementById('includeDate').checked;
+    if (includeDate) {
+        text += `${currentDateStr}\n`;
     }
     
-    // ユーザーが自由に入力したメッセージがあれば挟む
+    // 2. 固定メッセージフォーマット
+    text += `(${CONFIG.streamerName})さんの『${CONFIG.songTitle}』に投票します！\n\n`;
+    
+    // 3. ユーザーの自由入力応援メッセージ
     const userMessage = document.getElementById('userMessage').value;
     if (userMessage) {
-        text += `\n${userMessage}\n`;
+        text += `${userMessage}\n\n`;
     }
     
-    // 締め切り情報を追加
-    text += `\n締切：${CONFIG.deadline}\n`;
+    // 4. ハッシュタグ
+    text += `${CONFIG.additionalHashtag}\n`;
     
-    // サイトURL（自動取得）
+    // 5. 動画URL
+    if (CONFIG.videoUrl) {
+        text += `\n${CONFIG.videoUrl}`;
+    }
+    
+    // 6. サイトURL（前回の仕様をベースに、チェックONの場合のみ最末尾に付与）
     const includeUrl = document.getElementById('includeUrl').checked;
     if (includeUrl) {
-        text += `投票サイト：${window.location.href}`;
+        text += `\n\n投票サイト：${window.location.href}`;
     }
-    
-    // ハッシュタグ（固定のもの ＋ 活動者名のハッシュタグを自動生成）
-    text += `\n${CONFIG.additionalHashtag} #${CONFIG.streamerName}`;
     
     return text;
 }
