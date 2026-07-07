@@ -31,9 +31,10 @@
             border: 1px solid rgba(255, 255, 255, 0.6);
             position: relative;
             overflow: hidden;
-            margin-bottom: 30px; /* フッターとの間隔 */
+            margin-bottom: 30px; 
         }
 
+        /* 背景の天使の羽 */
         .container::before {
             content: "🪽";
             position: absolute;
@@ -45,8 +46,9 @@
             pointer-events: none;
         }
         
+        /* タイトル：スマホでも綺麗に2行に収まるように調整 */
         h1 { 
-            font-size: 19px; 
+            font-size: 20px; 
             margin-top: 0;
             margin-bottom: 20px; 
             text-align: center; 
@@ -55,9 +57,18 @@
             -webkit-text-fill-color: transparent;
             font-weight: 800; 
             letter-spacing: 0.05em;
+            line-height: 1.3;
+        }
+        h1 span {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: #726284;
+            -webkit-text-fill-color: #726284; /* 文字グラデーションをリセット */
+            margin-top: 4px;
         }
 
-        /* 設定から自動反映されるインフォメーション枠 */
+        /* インフォメーション枠 */
         .info-box {
             background: rgba(255, 255, 255, 0.5);
             border: 1px solid #e8e2f2;
@@ -153,8 +164,6 @@
             min-height: 60px; 
             line-height: 1.6; 
         }
-        .counter { text-align: right; font-size: 11px; color: #8e7f9e; margin-top: 6px; font-weight: 500; }
-        .counter.error { color: #f4212e; font-weight: bold; }
 
         .btn-copy { 
             width: 100%;
@@ -212,7 +221,7 @@
             animation: fadeIn 0.3s ease; 
         }
         
-        /* 📋 フッター（非公式注釈エリア） */
+        /* 注釈フッター */
         .footer-notice {
             max-width: 480px;
             width: 100%;
@@ -259,14 +268,13 @@
                 <input type="checkbox" id="includeDate" onchange="toggleOption('includeDate')"> 先頭に今日の日付を追加する
             </label>
             <label class="checkbox-label">
-                <input type="checkbox" id="includeUrl" onchange="toggleOption('includeUrl')"> 末尾にこのサイトのURLを追加する
+                <input type="checkbox" id="includeVideo" onchange="toggleOption('includeVideo')"> 末尾に動画URLを追加する
             </label>
         </div>
     </div>
 
     <div class="preview-title">投稿文章のプレビュー：</div>
     <div class="preview-box" id="previewText"></div>
-    <div class="counter" id="charCounter">0 / 140文字</div>
     
     <button class="btn-copy" onclick="copyToClipboard()">📋 文章をクリップボードにコピー</button>
     <div class="toast" id="toastMessage">文章をコピーしました！Xに手動で貼ることもできます。</div>
@@ -283,9 +291,10 @@
 
 <script>
 // ========================================================
-// ⚙️ ★超一元管理設定エリア★（次回からはここだけ書き換えてください）
+// ⚙️ ★超一元管理設定エリア★
 // ========================================================
-const CONFIG = {
+
+    const CONFIG = {
     streamerName: '夢羽ヒメ',                               // *streamerName*
     songTitle: '彩光 -イリザシオン-',                            // *SongTitle*
     videoUrl: 'https://youtu.be/Kaowp9KvnTo?si=-9hz87M4dlUBT8dO',                     // *videoURL*
@@ -295,15 +304,13 @@ const CONFIG = {
 };
 // ========================================================
 
-// グローバル変数で今日の日付（日本時間 yyyy/MM/dd）を保持
 let currentDateStr = '';
 
-// ページ読み込み時の初期化処理
 function initSite() {
-    // 1. ページタイトルと見出しを設定
+    // 1. ページタイトルと、スマホで綺麗に2行になる見出しを設定
     const pageTitle = `${CONFIG.streamerName}ミューコミVR投票サイト`;
     document.title = pageTitle;
-    document.getElementById('siteMainTitle').innerText = `✨ 🪽 ${pageTitle} 🪽 ✨`;
+    document.getElementById('siteMainTitle').innerHTML = `✨ 🪽 ${CONFIG.streamerName} 🪽<span>ミューコミVR投票サイト</span>`;
     
     // 2. インフォメーション枠の設定
     document.getElementById('infoStreamer').innerText = CONFIG.streamerName;
@@ -318,11 +325,10 @@ function initSite() {
         videoBtn.style.display = 'none';
     }
     
-    // 3. フッターの免責事項を自動生成
+    // 3. フッターの免責事項を自動生成（ご要望に基づき特定の一文を削除）
     document.getElementById('footerNotice').innerHTML = 
         `当サイトはファンが運営する非公式サイトであり、${CONFIG.streamerName}様、およびミューコミVR様とは一切関係ございません。` +
-        `関係各所へのご迷惑とならないようご配慮をお願いいたします。当サイトに関するお問い合わせは、` +
-        `<a href="https://x.com/amgs_lvhmt" target="_blank">@amgs_lvhmt</a> までお願いいたします。`;
+        `当サイトに関するお問い合わせは、<a href="https://x.com/amgs_lvhmt" target="_blank">@amgs_lvhmt</a> までお願いいたします。`;
 
     // 4. 日本時間(JST)で今日の「yyyy/MM/dd」を取得して変数に保持
     const now = new Date();
@@ -333,14 +339,13 @@ function initSite() {
         day: '2-digit'
     });
 
-    // 5. キャッシュ（localStorage）からチェックボックスの状態を読み込む（無い場合はデフォルトtrue）
+    // 5. キャッシュ（localStorage）からチェックボックスの状態を読み込む（デフォルトON）
     initCheckbox('includeDate', true);
-    initCheckbox('includeUrl', true);
+    initCheckbox('includeVideo', true);
     
     updatePreview();
 }
 
-// チェックボックスの初期状態を設定する関数
 function initCheckbox(id, defaultValue) {
     const saved = localStorage.getItem(id);
     const checkbox = document.getElementById(id);
@@ -351,14 +356,13 @@ function initCheckbox(id, defaultValue) {
     }
 }
 
-// チェックボックスが切り替わったときにキャッシュに保存する関数
 function toggleOption(id) {
     const checkbox = document.getElementById(id);
     localStorage.setItem(id, checkbox.checked);
     updatePreview();
 }
 
-// 指定されたフォーマットでXのテキストを組み立てる関数
+// 📋 ご指定の投票フォーマットに厳密に組み立て
 function generateText() {
     let text = '';
     
@@ -380,33 +384,17 @@ function generateText() {
     // 4. ハッシュタグ
     text += `${CONFIG.additionalHashtag}\n`;
     
-    // 5. 動画URL
-    if (CONFIG.videoUrl) {
+    // 5. 動画URL（チェックONかつURLが設定されている場合のみ）
+    const includeVideo = document.getElementById('includeVideo').checked;
+    if (includeVideo && CONFIG.videoUrl) {
         text += `\n${CONFIG.videoUrl}`;
-    }
-    
-    // 6. サイトURL（前回の仕様をベースに、チェックONの場合のみ最末尾に付与）
-    const includeUrl = document.getElementById('includeUrl').checked;
-    if (includeUrl) {
-        text += `\n\n投票サイト：${window.location.href}`;
     }
     
     return text;
 }
 
 function updatePreview() {
-    const finalText = generateText();
-    document.getElementById('previewText').innerText = finalText;
-    
-    const len = finalText.length;
-    const counterEl = document.getElementById('charCounter');
-    counterEl.innerText = `${len} / 140文字`;
-    
-    if (len > 140) {
-        counterEl.classList.add('error');
-    } else {
-        counterEl.classList.remove('error');
-    }
+    document.getElementById('previewText').innerText = generateText();
 }
 
 function copyToClipboard() {
@@ -418,13 +406,14 @@ function copyToClipboard() {
     });
 }
 
+// 🚀 X連携の修正：最も安定してアプリが開くインテント形式に変更
 function shareToX(type) {
     const finalText = generateText();
     const encodedText = encodeURIComponent(finalText);
     let xUrl = '';
     
     if (type === 'post') {
-        xUrl = `https://x.com/intent/post?text=${encodedText}`;
+        xUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
     } else if (type === 'dm') {
         xUrl = `https://x.com/messages/compose?text=${encodedText}`;
         if (CONFIG.recipientId) {
@@ -435,7 +424,6 @@ function shareToX(type) {
     window.open(xUrl, '_blank');
 }
 
-// 起動処理
 window.onload = initSite;
 </script>
 
