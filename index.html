@@ -96,22 +96,6 @@
             box-shadow: 0 2px 6px rgba(255, 0, 85, 0.2);
         }
         
-        /* ⚠️ 締切後に自動出現するアラートのスタイル */
-        .alert-box {
-            display: none; 
-            background-color: #ffeef0; 
-            border: 1px solid #f4212e; 
-            color: #f4212e; 
-            padding: 14px; 
-            border-radius: 14px; 
-            font-size: 14px; 
-            font-weight: bold; 
-            text-align: center; 
-            margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(244, 33, 46, 0.08);
-            animation: fadeIn 0.3s ease; 
-        }
-
         .form-group { margin-bottom: 20px; }
         
         label { 
@@ -138,11 +122,6 @@
             box-shadow: 0 0 0 4px rgba(138, 99, 190, 0.15);
             outline: none; 
         }
-        input[type="text"]:disabled {
-            background-color: #f1ecf7;
-            color: #a395b0;
-            cursor: not-allowed;
-        }
         
         .checkbox-group {
             background: rgba(255, 255, 255, 0.4);
@@ -164,9 +143,6 @@
             height: 16px;
             accent-color: #8a63be; 
             cursor: pointer;
-        }
-        .checkbox-label input[type="checkbox"]:disabled {
-            cursor: not-allowed;
         }
         
         .preview-title { 
@@ -233,17 +209,6 @@
         }
         .btn-dm:hover { box-shadow: 0 8px 24px rgba(65, 53, 82, 0.35); }
         
-        /* 🔒 ボタンが非活性（disabled）になったときのスタイル */
-        button:disabled, input[type="checkbox"]:disabled {
-            background: #d5cfdd !important;
-            color: #9b8fa7 !important;
-            border-color: #c9bfd3 !important;
-            box-shadow: none !important;
-            cursor: not-allowed !important;
-            transform: none !important;
-            pointer-events: none;
-        }
-        
         .toast { 
             display: none; 
             text-align: center; 
@@ -291,10 +256,6 @@
         <a id="infoVideoBtn" class="btn-video-link" target="_blank" style="display:none;">🎬 対象動画を再生する</a>
     </div>
     
-    <div id="deadlineAlert" class="alert-box">
-        ⚠️ 今回の投票期間は終了しました。
-    </div>
-    
     <div class="form-group">
         <label for="userMessage">自由入力メッセージ（熱い思いなど自由に変えられます）：</label>
         <input type="text" id="userMessage" placeholder="例: 最高に熱い曲です！一人でも多くの人に聴いてもらいたい！" oninput="updatePreview()">
@@ -315,13 +276,13 @@
     <div class="preview-title">投稿文章のプレビュー：</div>
     <div class="preview-box" id="previewText"></div>
     
-    <button class="btn-copy" id="btnCopy" onclick="copyToClipboard()">📋 文章をクリップボードにコピー</button>
+    <button class="btn-copy" onclick="copyToClipboard()">📋 文章をクリップボードにコピー</button>
     <div class="toast" id="toastMessage">文章をコピーしました！Xに手動で貼ることもできます。</div>
 
     <div class="btn-group">
         <div class="btn-row">
-            <button class="action-btn btn-post" id="btnPost" onclick="shareToX('post')">Xにポスト 🪽</button>
-            <button class="action-btn btn-dm" id="btnDm" onclick="shareToX('dm')">DMを送る ✉️</button>
+            <button class="action-btn btn-post" onclick="shareToX('post')">Xにポスト 🪽</button>
+            <button class="action-btn btn-dm" onclick="shareToX('dm')">DMを送る ✉️</button>
         </div>
     </div>
 </div>
@@ -332,15 +293,12 @@
 // ========================================================
 // ⚙️ ★超一元管理設定エリア★
 // ========================================================
-const CONFIG = {
+
+    const CONFIG = {
     streamerName: '夢羽ヒメ',                               // *streamerName*
     songTitle: '彩光 -イリザシオン-',                            // *SongTitle*
     videoUrl: 'https://youtu.be/Kaowp9KvnTo?si=-9hz87M4dlUBT8dO',                     // *videoURL*
-    
-    // 💡 締切日時（日本時間形式「YYYY-MM-DDTHH:mm:ss+09:00」で入力してください）
-    // 変更例：2026年9月10日の23時59分までなら '2026-09-10T23:59:00+09:00'
-    deadline: '2026-08-25T23:59:00+09:00',
-    
+    deadline: '8月25日(火) 23:59まで',                       // 締め切り
     additionalHashtag: '#ミューコミVR #VTuber楽曲ランキング #夢羽ヒメ',           // *additionalHashtag*
     recipientId: '100786821'                                          // DMの宛先数値ID（空欄でも可）
 };
@@ -354,19 +312,10 @@ function initSite() {
     document.title = pageTitle;
     document.getElementById('siteMainTitle').innerHTML = `✨ 🪽 ${CONFIG.streamerName} 🪽 ✨️<span>ミューコミVR投票サイト</span>`;
     
-    // 2. インフォメーション枠の設定（締切日時から表示テキストを動的に自動生成）
+    // 2. インフォメーション枠の設定
     document.getElementById('infoStreamer').innerText = CONFIG.streamerName;
     document.getElementById('infoSong').innerText = CONFIG.songTitle;
-    
-    const deadlineDate = new Date(CONFIG.deadline);
-    const month = deadlineDate.getMonth() + 1;
-    const date = deadlineDate.getDate();
-    const dayStr = ['日', '月', '火', '水', '木', '金', '土'][deadlineDate.getDay()];
-    const hours = String(deadlineDate.getHours()).padStart(2, '0');
-    const minutes = String(deadlineDate.getMinutes()).padStart(2, '0');
-    const deadlineDisplayText = `${month}月${date}日(${dayStr}) ${hours}:${minutes}まで`;
-    
-    document.getElementById('infoDeadline').innerText = deadlineDisplayText;
+    document.getElementById('infoDeadline').innerText = CONFIG.deadline;
     
     const videoBtn = document.getElementById('infoVideoBtn');
     if (CONFIG.videoUrl) {
@@ -376,7 +325,7 @@ function initSite() {
         videoBtn.style.display = 'none';
     }
     
-    // 3. フッターの免責事項を自動生成
+    // 3. フッターの免責事項を自動生成（ご要望に基づき特定の一文を削除）
     document.getElementById('footerNotice').innerHTML = 
         `当サイトはファンが運営する非公式サイトであり、${CONFIG.streamerName}様、およびミューコミVR様とは一切関係ございません。` +
         `当サイトに関するお問い合わせは、<a href="https://x.com/amgs_lvhmt" target="_blank">@amgs_lvhmt</a> までお願いいたします。`;
@@ -395,9 +344,88 @@ function initSite() {
     initCheckbox('includeVideo', true);
     
     updatePreview();
-
-    // 6. 🕒 締切日時の自動超過判定
-    checkDeadline(now);
 }
 
 function initCheckbox(id, defaultValue) {
+    const saved = localStorage.getItem(id);
+    const checkbox = document.getElementById(id);
+    if (saved !== null) {
+        checkbox.checked = (saved === 'true');
+    } else {
+        checkbox.checked = defaultValue;
+    }
+}
+
+function toggleOption(id) {
+    const checkbox = document.getElementById(id);
+    localStorage.setItem(id, checkbox.checked);
+    updatePreview();
+}
+
+// 📋 ご指定の投票フォーマットに厳密に組み立て
+function generateText() {
+    let text = '';
+    
+    // 1. 今日の日付（チェックONの場合のみ）
+    const includeDate = document.getElementById('includeDate').checked;
+    if (includeDate) {
+        text += `${currentDateStr}\n`;
+    }
+    
+    // 2. 固定メッセージフォーマット
+    text += `(${CONFIG.streamerName})さんの『${CONFIG.songTitle}』に投票します！\n\n`;
+    
+    // 3. ユーザーの自由入力応援メッセージ
+    const userMessage = document.getElementById('userMessage').value;
+    if (userMessage) {
+        text += `${userMessage}\n\n`;
+    }
+    
+    // 4. ハッシュタグ
+    text += `${CONFIG.additionalHashtag}\n`;
+    
+    // 5. 動画URL（チェックONかつURLが設定されている場合のみ）
+    const includeVideo = document.getElementById('includeVideo').checked;
+    if (includeVideo && CONFIG.videoUrl) {
+        text += `\n${CONFIG.videoUrl}`;
+    }
+    
+    return text;
+}
+
+function updatePreview() {
+    document.getElementById('previewText').innerText = generateText();
+}
+
+function copyToClipboard() {
+    const text = generateText();
+    navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toastMessage');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    });
+}
+
+// 🚀 X連携の修正：最も安定してアプリが開くインテント形式に変更
+function shareToX(type) {
+    const finalText = generateText();
+    const encodedText = encodeURIComponent(finalText);
+    let xUrl = '';
+    
+    if (type === 'post') {
+        xUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
+    } else if (type === 'dm') {
+        xUrl = `https://x.com/messages/compose?text=${encodedText}`;
+        if (CONFIG.recipientId) {
+            xUrl += `&recipient_id=${CONFIG.recipientId}`;
+        }
+    }
+    
+    window.open(xUrl, '_blank');
+}
+
+window.onload = initSite;
+</script>
+
+</body>
+</html>
