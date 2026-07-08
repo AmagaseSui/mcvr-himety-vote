@@ -207,7 +207,7 @@
         }
         .btn-dm:hover:not(:disabled) { box-shadow: 0 8px 24px rgba(65, 53, 82, 0.35); }
         
-        /* 🚫 投票期限オーバー、または文字数オーバーでボタンが非活性（disabled）になった時のグレーアウト表現 */
+        /* 🚫 非活性（disabled）時のグレーアウト表現 */
         button:disabled, .btn-copy:disabled { 
             background: #dcd6e5 !important; 
             color: #a396b2 !important; 
@@ -351,7 +351,7 @@
     
     <div class="form-group">
         <label for="userMessage">自由入力メッセージ（熱い思いなど自由に変えられます）：</label>
-        <input type="text" id="userMessage" placeholder="例: 最高に熱い曲です！一人でも多くの人に聴いてもらいたい！" oninput="updatePreview()">
+        <input type="text" id="userMessage" placeholder="例: 最高に熱い曲です！一人でも多くの人に聴もらいたい！" oninput="updatePreview()">
     </div>
 
     <div class="form-group">
@@ -417,12 +417,10 @@ const CONFIG = {
     streamerName: '夢羽ヒメ',
     songTitle: '彩光 -イリザシオン-',
     videoUrl: 'https://youtu.be/Kaowp9KvnTo?si=-9hz87M4dlUBT8dO',
-    deadline: '2026-08-25T23:59:00',
+    deadline: '2026-08-25T23:59:00', // ハイフン・スラッシュどちらでも自動対応
     additionalHashtag: '#ミューコミVR #VTuber楽曲ランキング #夢羽ヒメ',
     recipientId: '100786821',
 
-    // 🛠️ 1. スパム判定対策用の文章パターン（テンプレート）を一元管理
-    // {streamerName} {songTitle} {userMessage} の部分はプログラムが自動で置換します
     templates: [
         "({streamerName})さんの『{songTitle}』に投票します！\n\n{userMessage}",
         "応援している({streamerName})さんの神曲『{songTitle}』に1票入れます！✨\n\n{userMessage}",
@@ -433,8 +431,8 @@ const CONFIG = {
 
 let currentDateStr = '';
 let currentCalDate = new Date(); 
-let isExpired = false; // 期限切れフラグ
-let currentTemplateIdx = 0; // 現在選択中のテンプレート番号
+let isExpired = false; 
+let currentTemplateIdx = 0; 
 
 function formatDeadline(dateObj) {
     if (isNaN(dateObj.getTime())) return '日付設定エラー';
@@ -447,8 +445,6 @@ function formatDeadline(dateObj) {
     return `${m}月${d}日(${w}) ${h}:${min}まで`;
 }
 
-// 🛠️ 2. X（Twitter）仕様に基づいた超高精度文字数（ポイント）計算関数
-// URLは長さに関わらず半角23文字（23pt）換算、全角文字は2pt、半角文字は1ptで計算
 function getXPoints(text) {
     const urlRegex = /https?:\/\/[^\s\n]+/g;
     let processedText = text;
@@ -465,10 +461,10 @@ function getXPoints(text) {
         let isSurrogate = (code >= 0xd800 && code <= 0xdbff);
         
         if (!isSurrogate && ((code >= 0x0000 && code <= 0x007f) || (code >= 0xff61 && code <= 0xff9f))) {
-            points += 1; // 半角英数記号・半角カナは1ポイント
+            points += 1; 
         } else {
-            if (isSurrogate) i++; // 絵文字等のサロゲートペア対応
-            points += 2; // 日本語全角・絵文字は2ポイント
+            if (isSurrogate) i++; 
+            points += 2; 
         }
     }
     return points;
@@ -482,7 +478,9 @@ function initSite() {
     document.getElementById('infoStreamer').innerText = CONFIG.streamerName;
     document.getElementById('infoSong').innerText = CONFIG.songTitle;
     
-    const deadlineDate = new Date(CONFIG.deadline);
+    // 🛠️ Safari安全対策：ハイフン区切りをスラッシュ区切りに置換してからパース
+    const safeDeadlineStr = CONFIG.deadline.replace(/-/g, '/').replace('T', ' ');
+    const deadlineDate = new Date(safeDeadlineStr);
     document.getElementById('infoDeadline').innerText = formatDeadline(deadlineDate);
     
     const now = new Date();
@@ -533,7 +531,6 @@ function toggleOption(id) {
     updatePreview();
 }
 
-// 🛠️ 1. ボタンが押されたら次の文章パターンへ切り替え
 function switchTemplate() {
     currentTemplateIdx = (currentTemplateIdx + 1) % CONFIG.templates.length;
     document.getElementById('templateLabel').innerText = `パターン ${currentTemplateIdx + 1}`;
@@ -547,7 +544,6 @@ function generateText() {
         text += `${currentDateStr}\n`;
     }
     
-    // 選択中の文章パターンをベースに、各変数を安全に置換
     let baseText = CONFIG.templates[currentTemplateIdx];
     baseText = baseText.replace(/{streamerName}/g, CONFIG.streamerName);
     baseText = baseText.replace(/{songTitle}/g, CONFIG.songTitle);
@@ -573,14 +569,22 @@ function generateText() {
 
 function updatePreview() {
     const text = generateText();
-    document.getElementById('previewText').innerText = text;
+    const previewEl = document.getElementById('previewText');
+    if (previewEl) previewEl.innerText = text;
     
-    // 🛠️ 2. 文字数のリアルタイム判定＆警告制御
     const points = getXPoints(text);
-    const displayCount = (points / 2).toFixed(1).replace('.0', ''); // 日本語（全角）換算の文字数
+    const displayCount = (points / 2).toFixed(1).replace('.0', ''); 
     const counterEl = document.getElementById('charCounter');
-    counterEl.innerText = `${displayCount} / 140 文字`;
     
-    const isOverLimit = points > 280; // 280ポイント（全角140文字）を超えたらアウト
-    
-    if (isOv
+    if (counterEl) {
+        counterEl.innerText = `${displayCount} / 140 文字`;
+        const isOverLimit = points > 280; 
+        
+        if (isOverLimit) {
+            counterEl.style.color = '#f4212e';
+            counterEl.innerText += ' (文字数オーバー！)';
+        } else {
+            counterEl.style.color = '#635375';
+        }
+        
+        const shouldDisable 
