@@ -1,124 +1,64 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-    <style>
-        body { font-family: -apple-system, sans-serif; background: linear-gradient(135deg, #f4effa, #e3d7f0); margin: 0; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; box-sizing: border-box; }
-        .container { background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 35px 25px; border-radius: 24px; box-shadow: 0 20px 60px rgba(138,99,190,0.15); width: 100%; max-width: 480px; box-sizing: border-box; border: 1px solid rgba(255,255,255,0.6); position: relative; overflow: hidden; margin-bottom: 30px; }
-        .container::before { content: "🪽"; position: absolute; top: -10px; right: -10px; font-size: 90px; opacity: 0.06; transform: rotate(-15deg); pointer-events: none; }
-        h1 { font-size: 20px; margin: 0 0 20px; text-align: center; background: linear-gradient(135deg, #8a63be, #b397dc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; letter-spacing: 0.05em; line-height: 1.3; }
-        h1 span { display: block; font-size: 15px; font-weight: 600; color: #726284; -webkit-text-fill-color: #726284; margin-top: 4px; }
-        .info-box { background: rgba(255,255,255,0.5); border: 1px solid #e8e2f2; border-radius: 16px; padding: 15px; margin-bottom: 25px; font-size: 13px; color: #5d4f6c; line-height: 1.6; }
-        .info-box div { display: flex; margin-bottom: 4px; }
-        .info-label { font-weight: bold; color: #8a63be; width: 85px; flex-shrink: 0; }
-        .info-value { color: #4a3e56; word-break: break-all; }
-        .btn-video-link { display: inline-block; margin-top: 8px; color: #fff; background: #ff0055; text-decoration: none; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: bold; box-shadow: 0 2px 6px rgba(255,0,85,0.2); }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #635375; font-size: 13px; }
-        input[type="text"] { width: 100%; padding: 14px; border: 1px solid #d3c5e5; border-radius: 12px; font-size: 15px; box-sizing: border-box; transition: all 0.3s; background: rgba(255,255,255,0.9); color: #4a3e56; }
-        input[type="text"]:focus { border-color: #8a63be; box-shadow: 0 0 0 4px rgba(138,99,190,0.15); outline: none; }
-        .checkbox-group { background: rgba(255,255,255,0.4); padding: 10px 15px; border-radius: 12px; border: 1px solid #e8e2f2; }
-        .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13px; color: #5d4f6c; margin: 6px 0; }
-        .checkbox-label input { width: 16px; height: 16px; accent-color: #8a63be; cursor: pointer; }
-        .preview-title { font-size: 12px; color: #635375; font-weight: bold; }
-        .preview-box { background: rgba(255,255,255,0.6); border: 1px dashed #c0b0d8; border-radius: 14px; padding: 16px; font-size: 14px; color: #4a3e56; white-space: pre-wrap; word-break: break-all; min-height: 60px; line-height: 1.6; }
-        .btn-copy { width: 100%; background: #fff; color: #8a63be; border: 1px solid #dfd3f0; border-radius: 12px; padding: 11px; font-size: 13px; font-weight: 600; margin-top: 10px; box-shadow: 0 4px 12px rgba(138,99,190,0.05); transition: all 0.2s; cursor: pointer; }
-        .btn-copy:hover:not(:disabled) { background: #fdfbff; border-color: #b397dc; }
-        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; }
-        .btn-row { display: flex; gap: 14px; }
-        button.action-btn { flex: 1; padding: 15px; border: none; border-radius: 9999px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; }
-        button.action-btn:active:not(:disabled) { transform: scale(0.96); }
-        .btn-post { background: linear-gradient(135deg, #b599e2, #8a63be); color: white; box-shadow: 0 6px 20px rgba(138,99,190,0.3); }
-        .btn-post:hover:not(:disabled) { box-shadow: 0 8px 24px rgba(138,99,190,0.45); }
-        .btn-dm { background: linear-gradient(135deg, #5c4d70, #413552); color: white; box-shadow: 0 6px 20px rgba(65,53,82,0.2); }
-        .btn-dm:hover:not(:disabled) { box-shadow: 0 8px 24px rgba(65,53,82,0.35); }
-        button:disabled, .btn-copy:disabled { background: #dcd6e5 !important; color: #a396b2 !important; border-color: #d3c8df !important; box-shadow: none !important; cursor: not-allowed !important; opacity: 0.7; }
-        .toast { display: none; text-align: center; background: #8a63be; color: white; padding: 12px; border-radius: 12px; font-size: 13px; margin-top: 12px; animation: fadeIn 0.3s ease; }
-        .calendar-container { padding: 25px 20px; }
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .calendar-title { font-size: 15px; font-weight: bold; color: #635375; }
-        .calendar-btn { background: #fff; border: 1px solid #dfd3f0; border-radius: 8px; padding: 4px 10px; cursor: pointer; color: #8a63be; font-weight: 600; font-size: 12px; transition: all 0.2s; }
-        .calendar-btn:hover { background: #fdfbff; border-color: #b397dc; }
-        .calendar-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .calendar-table th { font-size: 11px; color: #8a63be; padding-bottom: 6px; font-weight: bold; text-align: center; }
-        .calendar-table td { border: 1px solid #e8e2f2; height: 52px; vertical-align: top; padding: 4px; background: rgba(255,255,255,0.4); box-sizing: border-box; }
-        .calendar-day-num { font-size: 10px; font-weight: bold; color: #726284; display: block; }
-        .calendar-table td.today { background: rgba(138,99,190,0.08); outline: 2px solid #8a63be; }
-        .badge-container { display: flex; flex-direction: column; gap: 2px; margin-top: 3px; }
-        .c-badge { font-size: 8px; padding: 1px 2px; border-radius: 4px; color: #fff; text-align: center; font-weight: bold; display: block; white-space: nowrap; }
-        .c-badge-post { background: linear-gradient(135deg, #b599e2, #8a63be); }
-        .c-badge-dm { background: linear-gradient(135deg, #5c4d70, #413552); }
-        .footer-notice { max-width: 480px; width: 100%; font-size: 11px; color: #7d6e8d; line-height: 1.6; text-align: center; padding: 0 10px; box-sizing: border-box; }
-        .footer-notice a { color: #8a63be; text-decoration: none; font-weight: bold; }
-        .footer-notice a:hover { text-decoration: underline; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title></title>
+<style>
+body{font-family:-apple-system,sans-serif;background:linear-gradient(135deg,#f4effa,#e3d7f0);margin:0;padding:40px 20px;display:flex;flex-direction:column;align-items:center;min-height:100vh;box-sizing:border-box}.container{background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:35px 25px;border-radius:24px;box-shadow:0 20px 60px rgba(138,99,190,0.15);width:100%;max-width:480px;box-sizing:border-box;border:1px solid rgba(255,255,255,0.6);position:relative;overflow:hidden;margin-bottom:30px}.container::before{content:"🪽";position:absolute;top:-10px;right:-10px;font-size:90px;opacity:.06;transform:rotate(-15deg);pointer-events:none}h1{font-size:20px;margin:0 0 20px;text-align:center;background:linear-gradient(135deg,#8a63be,#b397dc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;letter-spacing:.05em;line-height:1.3}h1 span{display:block;font-size:15px;font-weight:600;color:#726284;-webkit-text-fill-color:#726284;margin-top:4px}.info-box{background:rgba(255,255,255,0.5);border:1px solid #e8e2f2;border-radius:16px;padding:15px;margin-bottom:25px;font-size:13px;color:#5d4f6c;line-height:1.6}.info-box div{display:flex;margin-bottom:4px}.info-label{font-weight:bold;color:#8a63be;width:85px;flex-shrink:0}.info-value{color:#4a3e56;word-break:break-all}.btn-video-link{display:inline-block;margin-top:8px;color:#fff;background:#ff0055;text-decoration:none;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:bold;box-shadow:0 2px 6px rgba(255,0,85,0.2)}.form-group{margin-bottom:20px}label{display:block;margin-bottom:8px;font-weight:bold;color:#635375;font-size:13px}input[type=text]{width:100%;padding:14px;border:1px solid #d3c5e5;border-radius:12px;font-size:15px;box-sizing:border-box;transition:all .3s;background:rgba(255,255,255,0.9);color:#4a3e56}input[type=text]:focus{border-color:#8a63be;box-shadow:0 0 0 4px rgba(138,99,190,0.15);outline:none}.checkbox-group{background:rgba(255,255,255,0.4);padding:10px 15px;border-radius:12px;border:1px solid #e8e2f2}.checkbox-label{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:#5d4f6c;margin:6px 0}.checkbox-label input{width:16px;height:16px;accent-color:#8a63be;cursor:pointer}.preview-title{font-size:12px;color:#635375;font-weight:bold}.preview-box{background:rgba(255,255,255,0.6);border:1px dashed #c0b0d8;border-radius:14px;padding:16px;font-size:14px;color:#4a3e56;white-space:pre-wrap;word-break:break-all;min-height:60px;line-height:1.6}.btn-copy{width:100%;background:#fff;color:#8a63be;border:1px solid #dfd3f0;border-radius:12px;padding:11px;font-size:13px;font-weight:600;margin-top:10px;box-shadow:0 4px 12px rgba(138,99,190,0.05);transition:all .2s;cursor:pointer}.btn-copy:hover:not(:disabled){background:#fdfbff;border-color:#b397dc}.btn-group{display:flex;flex-direction:column;gap:12px;margin-top:30px}.btn-row{display:flex;gap:14px}button.action-btn{flex:1;padding:15px;border:none;border-radius:9999px;font-size:14px;font-weight:bold;cursor:pointer;transition:all .3s}button.action-btn:active:not(:disabled){transform:scale(0.96)}.btn-post{background:linear-gradient(135deg,#b599e2,#8a63be);color:#fff;box-shadow:0 6px 20px rgba(138,99,190,0.3)}.btn-post:hover:not(:disabled){box-shadow:0 8px 24px rgba(138,99,190,0.45)}.btn-dm{background:linear-gradient(135deg,#5c4d70,#413552);color:#fff;box-shadow:0 6px 20px rgba(65,53,82,0.2)}.btn-dm:hover:not(:disabled){box-shadow:0 8px 24px rgba(65,53,82,0.35)}button:disabled,.btn-copy:disabled{background:#dcd6e5!important;color:#a396b2!important;border-color:#d3c8df!important;box-shadow:none!important;cursor:not-allowed!important;opacity:.7}.toast{display:none;text-align:center;background:#8a63be;color:#fff;padding:12px;border-radius:12px;font-size:13px;margin-top:12px;animation:fadeIn .3s ease}.calendar-container{padding:25px 20px}.calendar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.calendar-title{font-size:15px;font-weight:bold;color:#635375}.calendar-btn{background:#fff;border:1px solid #dfd3f0;border-radius:8px;padding:4px 10px;cursor:pointer;color:#8a63be;font-weight:600;font-size:12px;transition:all .2s}.calendar-btn:hover{background:#fdfbff;border-color:#b397dc}.calendar-table{width:100%;border-collapse:collapse;table-layout:fixed}.calendar-table th{font-size:11px;color:#8a63be;padding-bottom:6px;font-weight:bold;text-align:center}.calendar-table td{border:1px solid #e8e2f2;height:52px;vertical-align:top;padding:4px;background:rgba(255,255,255,0.4);box-sizing:border-box}.calendar-day-num{font-size:10px;font-weight:bold;color:#726284;display:block}.calendar-table td.today{background:rgba(138,99,190,0.08);outline:2px solid #8a63be}.badge-container{display:flex;flex-direction:column;gap:2px;margin-top:3px}.c-badge{font-size:8px;padding:1px 2px;border-radius:4px;color:#fff;text-align:center;font-weight:bold;display:block;white-space:nowrap}.c-badge-post{background:linear-gradient(135deg,#b599e2,#8a63be)}.c-badge-dm{background:linear-gradient(135deg,#5c4d70,#413552)}.footer-notice{max-width:480px;width:100%;font-size:11px;color:#7d6e8d;line-height:1.6;text-align:center;padding:0 10px;box-sizing:border-box}.footer-notice a{color:#8a63be;text-decoration:none;font-weight:bold}.footer-notice a:hover{text-decoration:underline}@keyframes fadeIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+</style>
 </head>
 <body>
-
 <div class="container">
-    <h1 id="siteMainTitle"></h1>
-    <div class="info-box">
-        <div><span class="info-label">応援対象：</span><span class="info-value" id="infoStreamer"></span></div>
-        <div><span class="info-label">投票楽曲：</span><span class="info-value" id="infoSong"></span></div>
-        <div><span class="info-label">投票締切：</span><span class="info-value" id="infoDeadline" style="color:#f4212e; font-weight:bold;"></span></div>
-        <a id="infoVideoBtn" class="btn-video-link" target="_blank" style="display:none;">🎬 対象動画を再生する</a>
-    </div>
-    <div class="form-group">
-        <label>文章パターン（同じ文章の連続投稿によるXのスパム判定対策）：</label>
-        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255, 255, 255, 0.4); padding: 10px 15px; border-radius: 12px; border: 1px solid #e8e2f2;">
-            <span id="templateLabel" style="font-size: 13px; color: #5d4f6c; font-weight: bold;">パターン 1</span>
-            <button class="calendar-btn" onclick="switchTemplate()" style="margin: 0; padding: 6px 12px;">パターンを切り替える 🔁</button>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="userMessage">自由入力メッセージ（熱い思いなど自由に変えられます）：</label>
-        <input type="text" id="userMessage" placeholder="例: 最高に熱い曲です！一人でも多くの人に聴いてもらいたい！" oninput="updatePreview()">
-    </div>
-    <div class="form-group">
-        <label>投稿オプション：</label>
-        <div class="checkbox-group">
-            <label class="checkbox-label"><input type="checkbox" id="includeDate" onchange="toggleOption('includeDate')"> 先頭に今日の日付を追加する</label>
-            <label class="checkbox-label"><input type="checkbox" id="includeVideo" onchange="toggleOption('includeVideo')"> 末尾に動画URLを追加する</label>
-        </div>
-    </div>
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 25px; margin-bottom: 6px;">
-        <div class="preview-title">投稿文章のプレビュー：</div>
-        <div id="charCounter" style="font-size: 12px; font-weight: bold; color: #635375;">0 / 140 文字</div>
-    </div>
-    <div class="preview-box" id="previewText"></div>
-    <div id="charNotice" style="font-size: 10px; color: #8a7a9c; margin-top: 5px; text-align: right; line-height: 1.3;">
-        ※右上の文字数制限はあくまで参考です。
-    </div>
-    <button class="btn-copy" id="btnCopy" onclick="copyToClipboard()">📋 文章をクリップボードにコピー</button>
-    <div class="toast" id="toastMessage">文章をコピーしました！Xに手動で貼ることもできます。</div>
-    <div class="btn-group"><div class="btn-row">
-        <button class="action-btn btn-post" id="btnPost" onclick="shareToX('post')">Xにポスト 🪽</button>
-        <button class="action-btn btn-dm" id="btnDm" onclick="shareToX('dm')">DMを送る ✉️</button>
-    </div></div>
+<h1 id="siteMainTitle"></h1>
+<div class="info-box">
+<div><span class="info-label">応援対象：</span><span class="info-value" id="infoStreamer"></span></div>
+<div><span class="info-label">投票楽曲：</span><span class="info-value" id="infoSong"></span></div>
+<div><span class="info-label">投票締切：</span><span class="info-value" id="infoDeadline" style="color:#f4212e;font-weight:bold"></span></div>
+<a id="infoVideoBtn" class="btn-video-link" target="_blank" style="display:none">🎬 対象動画を再生する</a>
 </div>
-
+<div class="form-group">
+<label>文章パターン（同じ文章の連続投稿によるXのスパム判定対策）：</label>
+<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.4);padding:10px 15px;border-radius:12px;border:1px solid #e8e2f2">
+<span id="templateLabel" style="font-size:13px;color:#5d4f6c;font-weight:bold">パターン 1</span>
+<button class="calendar-btn" onclick="switchTemplate()" style="margin:0;padding:6px 12px">メッセージ候補を切り替える 🔁</button>
+</div>
+</div>
+<div class="form-group">
+<label for="userMessage">自由入力メッセージ（熱い思いなど自由に変えられます）：</label>
+<input type="text" id="userMessage" placeholder="ここにメッセージを入力" oninput="updatePreview()">
+</div>
+<div class="form-group">
+<label>投稿オプション：</label>
+<div class="checkbox-group">
+<label class="checkbox-label"><input type="checkbox" id="includeDate" onchange="toggleOption('includeDate')"> 先頭に今日の日付を追加する</label>
+<label class="checkbox-label"><input type="checkbox" id="includeVideo" onchange="toggleOption('includeVideo')"> 末尾に動画URLを追加する</label>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:25px;margin-bottom:6px">
+<div class="preview-title">投稿文章のプレビュー：</div>
+<div id="charCounter" style="font-size:12px;font-weight:bold;color:#635375">0 / 140 文字</div>
+</div>
+<div class="preview-box" id="previewText"></div>
+<div id="charNotice" style="font-size:10px;color:#8a7a9c;margin-top:5px;text-align:right;line-height:1.3">※右上の文字数制限はあくまで参考です。</div>
+<button class="btn-copy" id="btnCopy" onclick="copyToClipboard()">📋 文章をクリップボードにコピー</button>
+<div class="toast" id="toastMessage">文章をコピーしました！Xに手動で貼ることもできます。</div>
+<div class="btn-group"><div class="btn-row">
+<button class="action-btn btn-post" id="btnPost" onclick="shareToX('post')">Xにポスト 🪽</button>
+<button class="action-btn btn-dm" id="btnDm" onclick="shareToX('dm')">DMを送る ✉️</button>
+</div></div>
+</div>
 <div class="container calendar-container">
-    <div class="calendar-header">
-        <button class="calendar-btn" onclick="changeMonth(-1)">◀ 前月</button>
-        <div class="calendar-title" id="calendarTitle"></div>
-        <button class="calendar-btn" onclick="changeMonth(1)">次月 ▶</button>
-    </div>
-    <table class="calendar-table">
-        <thead><tr><th style="color: #ff5c5c;">日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th style="color: #5c85ff;">土</th></tr></thead>
-        <tbody id="calendarBody"></tbody>
-    </table>
-    <div style="font-size: 11px; color: #8a7a9c; text-align: center; margin-top: 15px; line-height: 1.5; background: rgba(255,255,255,0.3); padding: 8px; border-radius: 8px;">
-        ⚠️ <strong>ご注意：</strong>ブラウザのキャッシュや閲覧履歴を削除すると、これまでの応援記録はすべて初期化されます。
-    </div>
+<div class="calendar-header"><button class="calendar-btn" onclick="changeMonth(-1)">◀ 前月</button><div class="calendar-title" id="calendarTitle"></div><button class="calendar-btn" onclick="changeMonth(1)">次月 ▶</button></div>
+<table class="calendar-table">
+<thead><tr><th style="color:#ff5c5c">日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th style="color:#5c85ff">土</th></tr></thead>
+<tbody id="calendarBody"></tbody>
+</table>
+<div style="font-size:11px;color:#8a7a9c;text-align:center;margin-top:15px;line-height:1.5;background:rgba(255,255,255,0.3);padding:8px;border-radius:8px">⚠️ <strong>ご注意：</strong>ブラウザのキャッシュや閲覧履歴を削除すると、これまでの応援記録はすべて初期化されます。</div>
 </div>
 <footer class="footer-notice" id="footerNotice"></footer>
 
 <script>
 // ========================================================
-// ⚙️ ★超一元管理設定エリア★
+// ⚙️ ★超一元管理設定エリア★（ここだけ自由に変更可能）
 // ========================================================
 const CONFIG = {
     streamerName: '夢羽ヒメ',
@@ -127,129 +67,15 @@ const CONFIG = {
     deadline: '2026-08-25T23:59:00',
     additionalHashtag: '#ミューコミVR #VTuber楽曲ランキング #夢羽ヒメ',
     recipientId: '100786821',
-    templates: [
-        "({streamerName})さんの『{songTitle}』に投票します！\n\n{userMessage}",
-        "応援している({streamerName})さんの神曲『{songTitle}』に1票入れます！✨\n\n{userMessage}",
-        "ミューコミVRの楽曲ランキング、今回は({streamerName})さんの『{songTitle}』で決まり！🎵\n\n{userMessage}"
+    presets: [
+        "最高に熱い曲です！一人でも多くの人に聴いてもらいたい！",
+        "毎日聴くほど大好きな神曲です！応援しています✨",
+        "圧倒的な歌唱力と最高のメロディ、ぜひ聴いてみてください！"
     ]
 };
 // ========================================================
 
-let currentDateStr = '', currentCalDate = new Date(), isExpired = false, currentTemplateIdx = 0;
-const $ = id => document.getElementById(id);
-
-function formatDeadline(d) {
-    if (isNaN(d.getTime())) return '日付設定エラー';
-    const w = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
-    return `${d.getMonth() + 1}月${d.getDate()}日(${w}) ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}まで`;
-}
-
-function getXPoints(text) {
-    let t = text.replace(/https?:\/\/[^\s\n]+/g, "x".repeat(23)), pts = 0;
-    for (let i = 0; i < t.length; i++) {
-        const c = t.charCodeAt(i);
-        if ((c >= 0x0 && c <= 0x7f) || (c >= 0xff61 && c <= 0xff9f)) pts += 1;
-        else { if (c >= 0xd800 && c <= 0xdbff) i++; pts += 2; }
-    }
-    return pts;
-}
-
-function initSite() {
-    document.title = `${CONFIG.streamerName}ミューコミVR投票サイト`;
-    $('siteMainTitle').innerHTML = `✨ 🪽 ${CONFIG.streamerName} 🪽 ✨️<span>ミューコミVR投票サイト</span>`;
-    $('infoStreamer').innerText = CONFIG.streamerName;
-    $('infoSong').innerText = CONFIG.songTitle;
-    
-    const dDate = new Date(CONFIG.deadline.replace(/-/g, '/').replace('T', ' '));
-    $('infoDeadline').innerText = formatDeadline(dDate);
-    if (new Date() > dDate) { isExpired = true; $('infoDeadline').innerText += '（投票期間は終了しました）'; }
-    
-    $('infoVideoBtn').style.display = CONFIG.videoUrl ? 'inline-block' : 'none';
-    if (CONFIG.videoUrl) $('infoVideoBtn').href = CONFIG.videoUrl;
-    
-    $('footerNotice').innerHTML = `当サイトはファンが運営する非公式サイトであり、${CONFIG.streamerName}様、およびミューコミVR様とは一切関係ございません。<br>当サイトに関するお問い合わせは、<a href="https://x.com/amgs_lvhmt" target="_blank">@amgs_lvhmt</a> までお願いいたします。`;
-    currentDateStr = new Date().toLocaleDateString('ja-JP', {timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit'});
-
-    const initCB = (id) => { const s = localStorage.getItem(id); $(id).checked = s !== null ? s === 'true' : true; };
-    initCB('includeDate'); initCB('includeVideo');
-    updatePreview(); renderCalendar();
-}
-
-function toggleOption(id) { localStorage.setItem(id, $(id).checked); updatePreview(); }
-function switchTemplate() { currentTemplateIdx = (currentTemplateIdx + 1) % CONFIG.templates.length; $('templateLabel').innerText = `パターン ${currentTemplateIdx + 1}`; updatePreview(); }
-
-function generateText() {
-    let text = $('includeDate').checked ? `${currentDateStr}\n` : '';
-    let base = CONFIG.templates[currentTemplateIdx].replace(/{streamerName}/g, CONFIG.streamerName).replace(/{songTitle}/g, CONFIG.songTitle);
-    const msg = $('userMessage').value;
-    text += base.replace(/{userMessage}/g, msg ? `${msg}\n\n` : '') + '\n' + CONFIG.additionalHashtag;
-    if ($('includeVideo').checked && CONFIG.videoUrl) text += `\n\n${CONFIG.videoUrl}`;
-    return text;
-}
-
-function updatePreview() {
-    const text = generateText();
-    if ($('previewText')) $('previewText').innerText = text;
-    const pts = getXPoints(text), displayCount = (pts / 2).toFixed(1).replace('.0', ''), counterEl = $('charCounter');
-    if (counterEl) {
-        const isOver = pts > 280;
-        counterEl.innerText = `${displayCount} / 140 文字${isOver ? ' (文字数オーバー！)' : ''}`;
-        counterEl.style.color = isOver ? '#f4212e' : '#635375';
-        const dis = isExpired || isOver;
-        $('btnPost').disabled = dis; $('btnDm').disabled = dis; $('btnCopy').disabled = dis;
-    }
-}
-
-function copyToClipboard() {
-    navigator.clipboard.writeText(generateText()).then(() => {
-        $('toastMessage').style.display = 'block';
-        setTimeout(() => { $('toastMessage').style.display = 'none'; }, 3000);
-    });
-}
-
-function shareToX(type) {
-    const now = new Date(), k = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-    let log = {}; try { log = JSON.parse(localStorage.getItem('vote_track_log')) || {}; } catch(e){}
-    if (!log[k]) log[k] = { post: 0, dm: 0 };
-    log[k][type] = (log[k][type] || 0) + 1;
-    localStorage.setItem('vote_track_log', JSON.stringify(log));
-    renderCalendar();
-
-    const encoded = encodeURIComponent(generateText());
-    window.open(type === 'post' ? `https://twitter.com/intent/tweet?text=${encoded}` : `https://x.com/messages/compose?text=${encoded}${CONFIG.recipientId ? `&recipient_id=${CONFIG.recipientId}` : ''}`, '_blank');
-}
-
-function renderCalendar() {
-    const y = currentCalDate.getFullYear(), m = currentCalDate.getMonth();
-    if ($('calendarTitle')) $('calendarTitle').innerText = `${y}年${m + 1}月`;
-    let log = {}; try { log = JSON.parse(localStorage.getItem('vote_track_log')) || {}; } catch(e){}
-    const firstDay = new Date(y, m, 1).getDay(), daysInMonth = new Date(y, m + 1, 0).getDate(), tbody = $('calendarBody');
-    if (!tbody) return; tbody.innerHTML = '';
-    let date = 1, today = new Date();
-    for (let i = 0; i < 6; i++) {
-        let row = document.createElement('tr'), hasCells = false;
-        for (let j = 0; j < 7; j++) {
-            let cell = document.createElement('td');
-            if (i === 0 && j < firstDay || date > daysInMonth) row.appendChild(cell);
-            else {
-                hasCells = true; const dStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
-                if (date === today.getDate() && m === today.getMonth() && y === today.getFullYear()) cell.classList.add('today');
-                cell.innerHTML = `<span class="calendar-day-num">${date}</span>`;
-                if (log[dStr]) {
-                    let bc = '<div class="badge-container">';
-                    if (log[dStr].post) bc += `<span class="c-badge c-badge-post">🪽×${log[dStr].post}</span>`;
-                    if (log[dStr].dm) bc += `<span class="c-badge c-badge-dm">✉️×${log[dStr].dm}</span>`;
-                    cell.innerHTML += bc + '</div>';
-                }
-                row.appendChild(cell); date++;
-            }
-        }
-        if (!hasCells) break; tbody.appendChild(row);
-    }
-}
-function changeMonth(offset) { currentCalDate.setMonth(currentCalDate.getMonth() + offset); renderCalendar(); }
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSite); else initSite();
+let currentDateStr='',currentCalDate=new Date,isExpired=!1,currentTemplateIdx=0;const $=e=>document.getElementById(e);function formatDeadline(e){if(isNaN(e.getTime()))return"日付設定エラー";const t=["日","月","火","水","木","金","土"][e.getDay()];return`${e.getMonth()+1}月${e.getDate()}日(${t}) ${String(e.getHours()).padStart(2,"0")}:${String(e.getMinutes()).padStart(2,"0")}まで`}function getXPoints(e){let t=e.replace(/https?:\/\/[^\s\n]+/g,"x".repeat(23)),n=0;for(let e=0;e<t.length;e++){const r=t.charCodeAt(e);r>=0&&r<=127||r>=65377&&r<=65439?n+=1:(r>=55296&&r<=56319&&e++,n+=2)}return n}function initSite(){document.title=`${CONFIG.streamerName}ミューコミVR投票サイト`,$("siteMainTitle").innerHTML=`✨ 🪽 ${CONFIG.streamerName} 🪽 ✨️<span>ミューコミVR投票サイト</span>`,$("infoStreamer").innerText=CONFIG.streamerName,$("infoSong").innerText=CONFIG.songTitle;const e=new Date(CONFIG.deadline.replace(/-/g,"/").replace("T"," "));$("infoDeadline").innerText=formatDeadline(e),new Date>e&&(isExpired=!1,$("infoDeadline").innerText+="（投票期間は終了しました）"),$("infoVideoBtn").style.display=CONFIG.videoUrl?"inline-block":"none",CONFIG.videoUrl&&($("infoVideoBtn").href=CONFIG.videoUrl),$("footerNotice").innerHTML=`当サイトはファンが運営する非公式サイトであり、${CONFIG.streamerName}様、およびミューコミVR様とは一切関係ございません。<br>当サイトに関するお問い合わせは、<a href="https://x.com/amgs_lvhmt" target="_blank">@amgs_lvhmt</a> までお願いいたします。`,currentDateStr=(new Date).toLocaleDateString("ja-JP",{timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit"});const t=e=>{const t=localStorage.getItem(e);$(e).checked=null===t||"true"===t};t("includeDate"),t("includeVideo"),$("userMessage").value=CONFIG.presets[0],updatePreview(),renderCalendar()}function toggleOption(e){localStorage.setItem(e,$(e).checked),updatePreview()}function switchTemplate(){currentTemplateIdx=(currentTemplateIdx+1)%CONFIG.presets.length,$("templateLabel").innerText=`パターン ${currentTemplateIdx+1}`,$("userMessage").value=CONFIG.presets[currentTemplateIdx],updatePreview()}function generateText(){let e=$("includeDate").checked?`${currentDateStr}\n`:"";e+=`(${CONFIG.streamerName})さんの『${CONFIG.songTitle}』に投票します！\n\n`;const t=$("userMessage").value;return t&&(e+=`${t}\n\n`),e+=CONFIG.additionalHashtag,$("includeVideo").checked&&CONFIG.videoUrl&&(e+=`\n\n${CONFIG.videoUrl}`),e}function updatePreview(){const e=generateText();$("previewText")&&($("previewText").innerText=e);const t=$("userMessage").value,n=/[\(\)『』]/.test(t);$("userMessage").style.borderColor=n?"#f4212e":"#d3c5e5";const r=getXPoints(e),o=(r/2).toFixed(1).replace(".0",""),a=$("charCounter");if(a){const e=r>280;n?(a.innerText=`⚠️禁止文字 ( ) 『 』 があります`,a.style.color="#f4212e"):(a.innerText=`${o} / 140 文字${e?" (文字数オーバー！)":""}`,a.style.color=e?"#f4212e":"#635375");const c=isExpired||e||n;$("btnPost").disabled=c,$("btnDm").disabled=c,$("btnCopy").disabled=c}}function copyToClipboard(){navigator.clipboard.writeText(generateText()).then((()=>{$("toastMessage").style.display="block",setTimeout((()=>{$("toastMessage").style.display="none"}),3e3)}))}function shareToX(e){const t=new Date,n=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`;let r={};try{r=JSON.parse(localStorage.getItem("vote_track_log"))||{}}catch(e){}r[n]||(r[n]={post:0,dm:0}),r[n][e]=(r[n][e]||0)+1,localStorage.setItem("vote_track_log",JSON.stringify(r)),renderCalendar();const o=encodeURIComponent(generateText());window.open("post"===e?`https://twitter.com/intent/tweet?text=${o}`:`https://x.com/messages/compose?text=${o}${CONFIG.recipientId?`&recipient_id=${CONFIG.recipientId}`:""}`,"_blank")}function renderCalendar(){const e=currentCalDate.getFullYear(),t=currentCalDate.getMonth();$("calendarTitle")&&($("calendarTitle").innerText=`${e}年${t+1}月`);let n={};try{n=JSON.parse(localStorage.getItem("vote_track_log"))||{}}catch(e){}const r=new Date(e,t,1).getDay(),o=new Date(e,t+1,0).getDate(),a=$("calendarBody");if(!a)return;a.innerHTML="";let c=1,s=new Date;for(let d=0;d<6;d++){let d=document.createElement("tr"),i=!1;for(let u=0;u<7;u++){let cell=document.createElement("td");if(0===d&&u<r||c>o)d.appendChild(cell);else{i=!0;const u=`${e}-${String(t+1).padStart(2,"0")}-${String(c).padStart(2,"0")}`;c===s.getDate()&&t===s.getMonth()&&e===s.getFullYear()&&cell.classList.add("today"),cell.innerHTML=`<span class="calendar-day-num">${c}</span>`,n[u]&&(bc='<div class="badge-container">',n[u].post&&(bc+=`<span class="c-badge c-badge-post">🪽×${n[u].post}</span>`),n[u].dm&&(bc+=`<span class="c-badge c-badge-dm">✉️×${n[u].dm}</span>`),cell.innerHTML+=bc+"</div>"),d.appendChild(cell),c++}}if(!i)break;a.appendChild(d)}}function changeMonth(e){currentCalDate.setMonth(currentCalDate.getMonth()+e),renderCalendar()}"loading"===document.readyState?document.addEventListener("DOMContentLoaded",initSite):initSite();
 </script>
-
 </body>
 </html>
