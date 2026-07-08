@@ -64,7 +64,7 @@
             font-size: 15px;
             font-weight: 600;
             color: #726284;
-            -webkit-text-fill-color: #726284; /* 文字グラデーションをリセット */
+            -webkit-text-fill-color: #726284;
             margin-top: 4px;
         }
 
@@ -221,7 +221,7 @@
             animation: fadeIn 0.3s ease; 
         }
 
-        /* 📅 カレンダー用の新設スタイル */
+        /* 📅 カレンダー用スタイル */
         .calendar-container {
             padding: 25px 20px;
         }
@@ -385,27 +385,25 @@
 // ========================================================
 // ⚙️ ★超一元管理設定エリア★
 // ========================================================
-
-    const CONFIG = {
-    streamerName: '夢羽ヒメ',                               // *streamerName*
-    songTitle: '彩光 -イリザシオン-',                            // *SongTitle*
-    videoUrl: 'https://youtu.be/Kaowp9KvnTo?si=-9hz87M4dlUBT8dO',                     // *videoURL*
-    deadline: '8月25日(火) 23:59まで',                       // 締め切り
-    additionalHashtag: '#ミューコミVR #VTuber楽曲ランキング #夢羽ヒメ',           // *additionalHashtag*
-    recipientId: '100786821'                                          // DMの宛先数値ID（空欄でも可）
+const CONFIG = {
+    streamerName: '夢羽ヒメ',
+    songTitle: '彩光 -イリザシオン-',
+    videoUrl: 'https://youtu.be/Kaowp9KvnTo?si=-9hz87M4dlUBT8dO',
+    deadline: '8月25日(火) 23:59まで',
+    additionalHashtag: '#ミューコミVR #VTuber楽曲ランキング #夢羽ヒメ',
+    recipientId: '100786821'
 };
 // ========================================================
 
 let currentDateStr = '';
-let currentCalDate = new Date(); // カレンダー表示用の日付基準
+let currentCalDate = new Date(); 
 
 function initSite() {
-    // 1. ページタイトルと、スマホで綺麗に2行になる見出しを設定
     const pageTitle = `${CONFIG.streamerName}ミューコミVR投票サイト`;
     document.title = pageTitle;
-    document.getElementById('siteMainTitle').innerHTML = `✨ 🪽 ${CONFIG.streamerName} 🪽 ✨️<span>ミューコミVR投票サイト</span>`;
     
-    // 2. インフォメーション枠の設定
+    // 🛠️ HTML側のIDが完全に揃ったため、迷わず一発で文字を自動注入可能に
+    document.getElementById('siteMainTitle').innerHTML = `✨ 🪽 ${CONFIG.streamerName} 🪽 ✨️<span>ミューコミVR投票サイト</span>`;
     document.getElementById('infoStreamer').innerText = CONFIG.streamerName;
     document.getElementById('infoSong').innerText = CONFIG.songTitle;
     document.getElementById('infoDeadline').innerText = CONFIG.deadline;
@@ -418,12 +416,10 @@ function initSite() {
         videoBtn.style.display = 'none';
     }
     
-    // 3. フッターの免責事項を自動生成（ご要望に基づき特定の一文を削除）
     document.getElementById('footerNotice').innerHTML = 
         `当サイトはファンが運営する非公式サイトであり、${CONFIG.streamerName}様、およびミューコミVR様とは一切関係ございません。` +
         `当サイトに関するお問い合わせは、<a href="https://x.com/amgs_lvhmt" target="_blank">@amgs_lvhmt</a> までお願いいたします。`;
 
-    // 4. 日本時間(JST)で今日の「yyyy/MM/dd」を取得して変数に保持
     const now = new Date();
     currentDateStr = now.toLocaleDateString('ja-JP', {
         timeZone: 'Asia/Tokyo',
@@ -432,19 +428,16 @@ function initSite() {
         day: '2-digit'
     });
 
-    // 5. キャッシュ（localStorage）からチェックボックスの状態を読み込む（デフォルトON）
     initCheckbox('includeDate', true);
     initCheckbox('includeVideo', true);
     
     updatePreview();
-    
-    // 📅 カレンダーを初期描画
     renderCalendar();
 }
 
 function initCheckbox(id, defaultValue) {
-    const saved = localStorage.getItem(id);
     const checkbox = document.getElementById(id);
+    const saved = localStorage.getItem(id);
     if (saved !== null) {
         checkbox.checked = (saved === 'true');
     } else {
@@ -458,31 +451,23 @@ function toggleOption(id) {
     updatePreview();
 }
 
-// 📋 ご指定の投票フォーマットに厳密に組み立て
 function generateText() {
     let text = '';
     
-    // 1. 今日の日付（チェックONの場合のみ）
-    const includeDate = document.getElementById('includeDate').checked;
-    if (includeDate) {
+    if (document.getElementById('includeDate').checked) {
         text += `${currentDateStr}\n`;
     }
     
-    // 2. 固定メッセージフォーマット
     text += `(${CONFIG.streamerName})さんの『${CONFIG.songTitle}』に投票します！\n\n`;
     
-    // 3. ユーザーの自由入力応援メッセージ
     const userMessage = document.getElementById('userMessage').value;
     if (userMessage) {
         text += `${userMessage}\n\n`;
     }
     
-    // 4. ハッシュタグ
     text += `${CONFIG.additionalHashtag}\n`;
     
-    // 5. 動画URL（チェックONかつURLが設定されている場合のみ）
-    const includeVideo = document.getElementById('includeVideo').checked;
-    if (includeVideo && CONFIG.videoUrl) {
+    if (document.getElementById('includeVideo').checked && CONFIG.videoUrl) {
         text += `\n${CONFIG.videoUrl}`;
     }
     
@@ -502,9 +487,7 @@ function copyToClipboard() {
     });
 }
 
-// 🚀 X連携の修正：最も安定してアプリが開くインテント形式に変更
 function shareToX(type) {
-    // 📅 ボタンが押されたログをローカルストレージに記録
     recordShareAction(type);
 
     const finalText = generateText();
@@ -523,13 +506,12 @@ function shareToX(type) {
     window.open(xUrl, '_blank');
 }
 
-// 📅 ボタン押下時のローカルキャッシュ記録ロジック (完全に独立)
 function recordShareAction(type) {
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
-    const dateKey = `${year}-${month}-${day}`; // 「yyyy-MM-dd」形式をキーにする
+    const dateKey = `${year}-${month}-${day}`;
 
     let log = {};
     try {
@@ -543,10 +525,9 @@ function recordShareAction(type) {
     log[dateKey][type] = (log[dateKey][type] || 0) + 1;
 
     localStorage.setItem('vote_track_log', JSON.stringify(log));
-    renderCalendar(); // カレンダー表示を即座に更新
+    renderCalendar();
 }
 
-// 📅 カレンダーの生成・描画ロジック (完全に独立)
 function renderCalendar() {
     const year = currentCalDate.getFullYear();
     const month = currentCalDate.getMonth();
@@ -556,4 +537,77 @@ function renderCalendar() {
     let log = {};
     try {
         const savedLog = localStorage.getItem('vote_track_log');
-        if (savedLog) log = JSON.parse(saved
+        if (savedLog) log = JSON.parse(savedLog);
+    } catch (e) {}
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    const tbody = document.getElementById('calendarBody');
+    tbody.innerHTML = '';
+    
+    let date = 1;
+    const today = new Date();
+
+    for (let i = 0; i < 6; i++) {
+        let row = document.createElement('tr');
+        let hasCells = false;
+        
+        for (let j = 0; j < 7; j++) {
+            let cell = document.createElement('td');
+            
+            if (i === 0 && j < firstDay) {
+                row.appendChild(cell);
+            } else if (date > daysInMonth) {
+                row.appendChild(cell);
+            } else {
+                hasCells = true;
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+                
+                if (date === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    cell.classList.add('today');
+                }
+                
+                const dayNum = document.createElement('span');
+                dayNum.classList.add('calendar-day-num');
+                dayNum.innerText = date;
+                cell.appendChild(dayNum);
+                
+                if (log[dateStr]) {
+                    const badgeContainer = document.createElement('div');
+                    badgeContainer.classList.add('badge-container');
+                    
+                    if (log[dateStr].post > 0) {
+                        const b = document.createElement('span');
+                        b.classList.add('c-badge', 'c-badge-post');
+                        b.innerText = `🪽×${log[dateStr].post}`;
+                        badgeContainer.appendChild(b);
+                    }
+                    if (log[dateStr].dm > 0) {
+                        const b = document.createElement('span');
+                        b.classList.add('c-badge', 'c-badge-dm');
+                        b.innerText = `✉️×${log[dateStr].dm}`;
+                        badgeContainer.appendChild(b);
+                    }
+                    cell.appendChild(badgeContainer);
+                }
+                
+                row.appendChild(cell);
+                date++;
+            }
+        }
+        if (!hasCells) break;
+        tbody.appendChild(row);
+    }
+}
+
+function changeMonth(offset) {
+    currentCalDate.setMonth(currentCalDate.getMonth() + offset);
+    renderCalendar();
+}
+
+window.onload = initSite;
+</script>
+
+</body>
+</html>
