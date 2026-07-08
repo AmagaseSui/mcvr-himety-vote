@@ -46,7 +46,7 @@
             pointer-events: none;
         }
         
-        /* タイトル：スマホでも綺麗に2行に収まるように調整 */
+        /* タイトル */
         h1 { 
             font-size: 20px; 
             margin-top: 0;
@@ -149,8 +149,6 @@
             font-size: 12px; 
             color: #635375; 
             font-weight: bold; 
-            margin-top: 25px; 
-            margin-bottom: 6px; 
         }
         .preview-box { 
             background: rgba(255, 255, 255, 0.6);
@@ -179,7 +177,7 @@
             transition: all 0.2s ease;
             cursor: pointer;
         }
-        .btn-copy:hover { background: #fdfbff; border-color: #b397dc; }
+        .btn-copy:hover:not(:disabled) { background: #fdfbff; border-color: #b397dc; }
         
         .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; }
         .btn-row { display: flex; gap: 14px; }
@@ -193,22 +191,33 @@
             cursor: pointer; 
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
-        button.action-btn:active { transform: scale(0.96); }
+        button.action-btn:active:not(:disabled) { transform: scale(0.96); }
         
         .btn-post { 
             background: linear-gradient(135deg, #b599e2 0%, #8a63be 100%); 
             color: white; 
             box-shadow: 0 6px 20px rgba(138, 99, 190, 0.3);
         }
-        .btn-post:hover { box-shadow: 0 8px 24px rgba(138, 99, 190, 0.45); }
+        .btn-post:hover:not(:disabled) { box-shadow: 0 8px 24px rgba(138, 99, 190, 0.45); }
         
         .btn-dm { 
             background: linear-gradient(135deg, #5c4d70 0%, #413552 100%); 
             color: white; 
             box-shadow: 0 6px 20px rgba(65, 53, 82, 0.2);
         }
-        .btn-dm:hover { box-shadow: 0 8px 24px rgba(65, 53, 82, 0.35); }
+        .btn-dm:hover:not(:disabled) { box-shadow: 0 8px 24px rgba(65, 53, 82, 0.35); }
         
+        /* 🚫 投票期限オーバー、または文字数オーバーでボタンが非活性（disabled）になった時のグレーアウト表現 */
+        button:disabled, .btn-copy:disabled { 
+            background: #dcd6e5 !important; 
+            color: #a396b2 !important; 
+            border-color: #d3c8df !important; 
+            box-shadow: none !important; 
+            cursor: not-allowed !important; 
+            transform: none !important;
+            opacity: 0.7;
+        }
+
         .toast { 
             display: none; 
             text-align: center; 
@@ -331,6 +340,14 @@
         <div><span class="info-label">投票締切：</span><span class="info-value" id="infoDeadline" style="color:#f4212e; font-weight:bold;"></span></div>
         <a id="infoVideoBtn" class="btn-video-link" target="_blank" style="display:none;">🎬 対象動画を再生する</a>
     </div>
+
+    <div class="form-group">
+        <label>文章パターン（同じ文章の連続投稿によるXのスパム判定対策）：</label>
+        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255, 255, 255, 0.4); padding: 10px 15px; border-radius: 12px; border: 1px solid #e8e2f2;">
+            <span id="templateLabel" style="font-size: 13px; color: #5d4f6c; font-weight: bold;">パターン 1</span>
+            <button class="calendar-btn" onclick="switchTemplate()" style="margin: 0; padding: 6px 12px;">パターンを切り替える 🔁</button>
+        </div>
+    </div>
     
     <div class="form-group">
         <label for="userMessage">自由入力メッセージ（熱い思いなど自由に変えられます）：</label>
@@ -349,16 +366,23 @@
         </div>
     </div>
 
-    <div class="preview-title">投稿文章のプレビュー：</div>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 25px; margin-bottom: 6px;">
+        <div class="preview-title">投稿文章のプレビュー：</div>
+        <div id="charCounter" style="font-size: 12px; font-weight: bold; color: #635375;">0 / 140 文字</div>
+    </div>
     <div class="preview-box" id="previewText"></div>
     
-    <button class="btn-copy" onclick="copyToClipboard()">📋 文章をクリップボードにコピー</button>
+    <div id="charNotice" style="font-size: 10px; color: #8a7a9c; margin-top: 5px; text-align: right; line-height: 1.3;">
+        ※あくまで参考です。Xの仕様変更により実際の制限と差異が生じる可能性あります
+    </div>
+    
+    <button class="btn-copy" id="btnCopy" onclick="copyToClipboard()">📋 文章をクリップボードにコピー</button>
     <div class="toast" id="toastMessage">文章をコピーしました！Xに手動で貼ることもできます。</div>
 
     <div class="btn-group">
         <div class="btn-row">
-            <button class="action-btn btn-post" onclick="shareToX('post')">Xにポスト 🪽</button>
-            <button class="action-btn btn-dm" onclick="shareToX('dm')">DMを送る ✉️</button>
+            <button class="action-btn btn-post" id="btnPost" onclick="shareToX('post')">Xにポスト 🪽</button>
+            <button class="action-btn btn-dm" id="btnDm" onclick="shareToX('dm')">DMを送る ✉️</button>
         </div>
     </div>
 </div>
@@ -377,6 +401,10 @@
         </thead>
         <tbody id="calendarBody"></tbody>
     </table>
+    
+    <div style="font-size: 11px; color: #8a7a9c; text-align: center; margin-top: 15px; line-height: 1.5; background: rgba(255,255,255,0.3); padding: 8px; border-radius: 8px;">
+        ⚠️ <strong>ご注意：</strong>ブラウザのキャッシュや閲覧履歴（Local Storage）を削除すると、これまでの応援記録カレンダーはすべて初期化されます。
+    </div>
 </div>
 
 <footer class="footer-notice" id="footerNotice"></footer>
@@ -389,24 +417,79 @@ const CONFIG = {
     streamerName: '夢羽ヒメ',
     songTitle: '彩光 -イリザシオン-',
     videoUrl: 'https://youtu.be/Kaowp9KvnTo?si=-9hz87M4dlUBT8dO',
-    deadline: '8月25日(火) 23:59まで',
+    deadline: '2026-08-25T23:59:00',
     additionalHashtag: '#ミューコミVR #VTuber楽曲ランキング #夢羽ヒメ',
-    recipientId: '100786821'
+    recipientId: '100786821',
+
+    // 🛠️ 1. スパム判定対策用の文章パターン（テンプレート）を一元管理
+    // {streamerName} {songTitle} {userMessage} の部分はプログラムが自動で置換します
+    templates: [
+        "({streamerName})さんの『{songTitle}』に投票します！\n\n{userMessage}",
+        "応援している({streamerName})さんの神曲『{songTitle}』に1票入れます！✨\n\n{userMessage}",
+        "ミューコミVRの楽曲ランキング、今回は({streamerName})さんの『{songTitle}』で決まり！🎵\n\n{userMessage}"
+    ]
 };
 // ========================================================
 
 let currentDateStr = '';
 let currentCalDate = new Date(); 
+let isExpired = false; // 期限切れフラグ
+let currentTemplateIdx = 0; // 現在選択中のテンプレート番号
+
+function formatDeadline(dateObj) {
+    if (isNaN(dateObj.getTime())) return '日付設定エラー';
+    const days = ['日', '月', '火', '水', '木', '金', '土'];
+    const m = dateObj.getMonth() + 1;
+    const d = dateObj.getDate();
+    const w = days[dateObj.getDay()];
+    const h = String(dateObj.getHours()).padStart(2, '0');
+    const min = String(dateObj.getMinutes()).padStart(2, '0');
+    return `${m}月${d}日(${w}) ${h}:${min}まで`;
+}
+
+// 🛠️ 2. X（Twitter）仕様に基づいた超高精度文字数（ポイント）計算関数
+// URLは長さに関わらず半角23文字（23pt）換算、全角文字は2pt、半角文字は1ptで計算
+function getXPoints(text) {
+    const urlRegex = /https?:\/\/[^\s\n]+/g;
+    let processedText = text;
+    const urls = text.match(urlRegex);
+    if (urls) {
+        urls.forEach(url => {
+            processedText = processedText.replace(url, "x".repeat(23));
+        });
+    }
+    
+    let points = 0;
+    for (let i = 0; i < processedText.length; i++) {
+        const code = processedText.charCodeAt(i);
+        let isSurrogate = (code >= 0xd800 && code <= 0xdbff);
+        
+        if (!isSurrogate && ((code >= 0x0000 && code <= 0x007f) || (code >= 0xff61 && code <= 0xff9f))) {
+            points += 1; // 半角英数記号・半角カナは1ポイント
+        } else {
+            if (isSurrogate) i++; // 絵文字等のサロゲートペア対応
+            points += 2; // 日本語全角・絵文字は2ポイント
+        }
+    }
+    return points;
+}
 
 function initSite() {
     const pageTitle = `${CONFIG.streamerName}ミューコミVR投票サイト`;
     document.title = pageTitle;
     
-    // 🛠️ HTML側のIDが完全に揃ったため、迷わず一発で文字を自動注入可能に
     document.getElementById('siteMainTitle').innerHTML = `✨ 🪽 ${CONFIG.streamerName} 🪽 ✨️<span>ミューコミVR投票サイト</span>`;
     document.getElementById('infoStreamer').innerText = CONFIG.streamerName;
     document.getElementById('infoSong').innerText = CONFIG.songTitle;
-    document.getElementById('infoDeadline').innerText = CONFIG.deadline;
+    
+    const deadlineDate = new Date(CONFIG.deadline);
+    document.getElementById('infoDeadline').innerText = formatDeadline(deadlineDate);
+    
+    const now = new Date();
+    if (now > deadlineDate) {
+        isExpired = true;
+        document.getElementById('infoDeadline').innerText += '（投票期間は終了しました）';
+    }
     
     const videoBtn = document.getElementById('infoVideoBtn');
     if (CONFIG.videoUrl) {
@@ -420,7 +503,6 @@ function initSite() {
         `当サイトはファンが運営する非公式サイトであり、${CONFIG.streamerName}様、およびミューコミVR様とは一切関係ございません。` +
         `当サイトに関するお問い合わせは、<a href="https://x.com/amgs_lvhmt" target="_blank">@amgs_lvhmt</a> までお願いいたします。`;
 
-    const now = new Date();
     currentDateStr = now.toLocaleDateString('ja-JP', {
         timeZone: 'Asia/Tokyo',
         year: 'numeric',
@@ -451,6 +533,13 @@ function toggleOption(id) {
     updatePreview();
 }
 
+// 🛠️ 1. ボタンが押されたら次の文章パターンへ切り替え
+function switchTemplate() {
+    currentTemplateIdx = (currentTemplateIdx + 1) % CONFIG.templates.length;
+    document.getElementById('templateLabel').innerText = `パターン ${currentTemplateIdx + 1}`;
+    updatePreview();
+}
+
 function generateText() {
     let text = '';
     
@@ -458,156 +547,40 @@ function generateText() {
         text += `${currentDateStr}\n`;
     }
     
-    text += `(${CONFIG.streamerName})さんの『${CONFIG.songTitle}』に投票します！\n\n`;
+    // 選択中の文章パターンをベースに、各変数を安全に置換
+    let baseText = CONFIG.templates[currentTemplateIdx];
+    baseText = baseText.replace(/{streamerName}/g, CONFIG.streamerName);
+    baseText = baseText.replace(/{songTitle}/g, CONFIG.songTitle);
     
     const userMessage = document.getElementById('userMessage').value;
     if (userMessage) {
-        text += `${userMessage}\n\n`;
+        baseText = baseText.replace(/{userMessage}/g, `${userMessage}\n\n`);
+    } else {
+        baseText = baseText.replace(/{userMessage}/g, '');
     }
     
-    text += `${CONFIG.additionalHashtag}\n`;
+    text += baseText;
+    
+    if (!text.endsWith('\n')) text += '\n';
+    text += `${CONFIG.additionalHashtag}`;
     
     if (document.getElementById('includeVideo').checked && CONFIG.videoUrl) {
-        text += `\n${CONFIG.videoUrl}`;
+        text += `\n\n${CONFIG.videoUrl}`;
     }
     
     return text;
 }
 
 function updatePreview() {
-    document.getElementById('previewText').innerText = generateText();
-}
-
-function copyToClipboard() {
     const text = generateText();
-    navigator.clipboard.writeText(text).then(() => {
-        const toast = document.getElementById('toastMessage');
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 3000);
-    });
-}
-
-function shareToX(type) {
-    recordShareAction(type);
-
-    const finalText = generateText();
-    const encodedText = encodeURIComponent(finalText);
-    let xUrl = '';
+    document.getElementById('previewText').innerText = text;
     
-    if (type === 'post') {
-        xUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
-    } else if (type === 'dm') {
-        xUrl = `https://x.com/messages/compose?text=${encodedText}`;
-        if (CONFIG.recipientId) {
-            xUrl += `&recipient_id=${CONFIG.recipientId}`;
-        }
-    }
+    // 🛠️ 2. 文字数のリアルタイム判定＆警告制御
+    const points = getXPoints(text);
+    const displayCount = (points / 2).toFixed(1).replace('.0', ''); // 日本語（全角）換算の文字数
+    const counterEl = document.getElementById('charCounter');
+    counterEl.innerText = `${displayCount} / 140 文字`;
     
-    window.open(xUrl, '_blank');
-}
-
-function recordShareAction(type) {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const dateKey = `${year}-${month}-${day}`;
-
-    let log = {};
-    try {
-        const savedLog = localStorage.getItem('vote_track_log');
-        if (savedLog) log = JSON.parse(savedLog);
-    } catch (e) { console.error(e); }
-
-    if (!log[dateKey]) {
-        log[dateKey] = { post: 0, dm: 0 };
-    }
-    log[dateKey][type] = (log[dateKey][type] || 0) + 1;
-
-    localStorage.setItem('vote_track_log', JSON.stringify(log));
-    renderCalendar();
-}
-
-function renderCalendar() {
-    const year = currentCalDate.getFullYear();
-    const month = currentCalDate.getMonth();
+    const isOverLimit = points > 280; // 280ポイント（全角140文字）を超えたらアウト
     
-    document.getElementById('calendarTitle').innerText = `${year}年${month + 1}月`;
-    
-    let log = {};
-    try {
-        const savedLog = localStorage.getItem('vote_track_log');
-        if (savedLog) log = JSON.parse(savedLog);
-    } catch (e) {}
-
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    
-    const tbody = document.getElementById('calendarBody');
-    tbody.innerHTML = '';
-    
-    let date = 1;
-    const today = new Date();
-
-    for (let i = 0; i < 6; i++) {
-        let row = document.createElement('tr');
-        let hasCells = false;
-        
-        for (let j = 0; j < 7; j++) {
-            let cell = document.createElement('td');
-            
-            if (i === 0 && j < firstDay) {
-                row.appendChild(cell);
-            } else if (date > daysInMonth) {
-                row.appendChild(cell);
-            } else {
-                hasCells = true;
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
-                
-                if (date === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                    cell.classList.add('today');
-                }
-                
-                const dayNum = document.createElement('span');
-                dayNum.classList.add('calendar-day-num');
-                dayNum.innerText = date;
-                cell.appendChild(dayNum);
-                
-                if (log[dateStr]) {
-                    const badgeContainer = document.createElement('div');
-                    badgeContainer.classList.add('badge-container');
-                    
-                    if (log[dateStr].post > 0) {
-                        const b = document.createElement('span');
-                        b.classList.add('c-badge', 'c-badge-post');
-                        b.innerText = `🪽×${log[dateStr].post}`;
-                        badgeContainer.appendChild(b);
-                    }
-                    if (log[dateStr].dm > 0) {
-                        const b = document.createElement('span');
-                        b.classList.add('c-badge', 'c-badge-dm');
-                        b.innerText = `✉️×${log[dateStr].dm}`;
-                        badgeContainer.appendChild(b);
-                    }
-                    cell.appendChild(badgeContainer);
-                }
-                
-                row.appendChild(cell);
-                date++;
-            }
-        }
-        if (!hasCells) break;
-        tbody.appendChild(row);
-    }
-}
-
-function changeMonth(offset) {
-    currentCalDate.setMonth(currentCalDate.getMonth() + offset);
-    renderCalendar();
-}
-
-window.onload = initSite;
-</script>
-
-</body>
-</html>
+    if (isOv
