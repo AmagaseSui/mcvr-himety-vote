@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【ライブ名が入ります】特設ランディングページ</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ==========================================
+           1. 変数管理（デザインのカスタマイズはここを変更）
+           ========================================== */
+        :root {
+            /* カラーパレット */
+            --bg-deep: #0a0314;           /* 宇宙のベースとなる深紫 */
+            --color-lavender: #d1c4e9;    /* テーマカラー：ラベンダー */
+            --color-purple-light: #7e57c2;/* 明るい紫 */
+            --color-gold: #dfb755;        /* メインアクセント：ゴールド */
+            --color-gold-light: #fff3ad;  /* ハイライト用ゴールド */
+            --text-main: #ffffff;         /* メインテキスト */
+            --text-sub: #b3a2c7;          /* サブテキスト */
+            
+            /* フォントファミリ */
+            --font-en: 'Cinzel', serif;
+            --font-ja: 'Noto Sans JP', sans-serif;
+            
+            /* レイアウト */
+            --max-width: 1000px;
+            --transition-speed: 0.3s;
+        }
+
+        /* ==========================================
+           2. 全体リセット & 共通スタイル
+           ========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-ja);
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.8;
+            letter-spacing: 0.05em;
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+            transition: color var(--transition-speed);
+        }
+        li {
+            list-style: none;
+        }
+
+        /* 重くならない軽量な宇宙・星雲の背景演出 */
+        .nebula-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(126, 87, 194, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(94, 53, 177, 0.25) 0%, transparent 50%),
+                linear-gradient(180deg, #0a0314 0%, #120725 50%, #0a0314 100%);
+            background-size: cover;
+        }
+
+        /* セクション共通 */
+        section {
+            padding: 80px var(--container-padding, 20px);
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .section-title {
+            font-family: var(--font-en);
+            font-size: 2.5rem;
+            text-align: center;
+            color: var(--color-gold);
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(223, 183, 85, 0.3);
+        }
+        .section-subtitle {
+            font-size: 0.9rem;
+            text-align: center;
+            color: var(--color-lavender);
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+
+        /* ==========================================
+           3. ヘッダー（ナビゲーション）
+           ========================================== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 3, 20, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(22df, 183, 85, 0.15);
+        }
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 15px 20px;
+        }
+        .logo {
+            font-family: var(--font-en);
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--color-gold);
+        }
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+        .nav-menu a {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .nav-menu a:hover {
+            color: var(--color-gold);
+        }
+        
+        /* スマホ用ハンバーガーメニュー */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .menu-toggle span {
+            width: 25px;
+            height: 2px;
+            background-color: var(--color-gold);
+            transition: var(--transition-speed);
+        }
+
+        /* ==========================================
+           4. TOP (メインビジュアル)
+           ========================================== */
+        #top {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding-top: 100px;
+            position: relative;
+        }
+        /* メイン画像差し込み枠（比率を維持しつつモダンな光彩を付与） */
+        .main-visual-space {
+            width: 100%;
+            max-width: 640px;
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(135deg, rgba(209, 196, 233, 0.1), rgba(126, 87, 194, 0.1));
+            border: 1px solid var(--color-gold);
+            box-shadow: 0 0 30px rgba(126, 87, 194, 0.3);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            color: var(--color-lavender);
+            font-size: 0.9rem;
+        }
+        .live-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #fff 40%, var(--color-lavender));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .live-date {
+            font-family: var(--font-en);
+            font-size: 1.5rem;
+            color: var(--color-gold);
+            letter-spacing: 0.1em;
+        }
+
+        /* ==========================================
+           5. CONCEPT
+           ========================================== */
+        #concept {
+            text-align: center;
+        }
+        .concept-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(209, 196, 233, 0.1);
+            border-radius: 12px;
+            padding: 40px 30px;
+            box-shadow: inset 0 0 20px rgba(126, 87, 194, 0.1);
+        }
+        .concept-text {
+            font-size: 1.05rem;
+            color: var(--text-main);
+            margin-bottom: 20px;
+        }
+
+        /* ==========================================
+           6. OUTLINE (開催概要)
+           ========================================== */
+        .outline-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .outline-table tr {
+            border-bottom: 1px solid rgba(209, 196, 233, 0.1);
+        }
+        .outline-table th, .outline-table td {
+            padding: 20px;
+            text-align: left;
+        }
+        .outline-table th {
+            width: 30%;
+            color: var(--color-gold);
+            font-weight: 500;
+        }
+
+        /* ==========================================
+           7. TICKET
+           ========================================== */
+        .ticket-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .ticket-card {
+            background: linear-gradient(180deg, rgba(30, 15, 50, 0.6) 0%, rgba(15, 5, 30, 0.8) 100%);
+            border: 1px solid rgba(209, 196, 233, 0.15);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            transition: transform var(--transition-speed);
+        }
+        .ticket-card.premium {
+            border-color: var(--color-gold);
+            box-shadow: 0 0 15px rgba(223, 183, 85, 0.2);
+        }
+        .ticket-card.premium::before {
+            content: "RECOMMEND";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-gold);
+            color: var(--bg-deep);
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 2px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.1em;
+        }
+        .ticket-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .ticket-price {
+            font-family: var(--font-en);
+            font-size: 1.8rem;
+            color: var(--color-gold);
+            margin-bottom: 15px;
+        }
+        .ticket-benefit {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            text-align: left;
+            border-top: 1px solid rgba(209, 196, 233, 0.1);
+            padding-top: 15px;
+        }
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            border-radius: 4px;
+            margin-top: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+        .btn:hover {
+            background: var(--color-gold);
+            color: var(--bg-deep);
+            box-shadow: 0 0 10px rgba(223, 183, 85, 0.4);
+        }
+
+        /* ==========================================
+           8. GOODS
+           ========================================== */
+        .goods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        .goods-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(209, 196, 233, 0.1);
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+        }
+        .goods-thumb {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: rgba(209, 196, 233, 0.05);
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-sub);
+            font-size: 0.8rem;
+        }
+        .goods-name {
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        .goods-price {
+            color: var(--color-gold);
+            font-family: var(--font-en);
+            font-weight: bold;
+        }
+
+        /* ==========================================
+           9. ATTENTION (注意事項)
+           ========================================== */
+        .attention-box {
+            background: rgba(126, 87, 194, 0.05);
+            border-left: 4px solid var(--color-gold);
+            padding: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+        .attention-list li {
+            position: relative;
+            padding-left: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+        }
+        .attention-list li::before {
+            content: "※";
+            position: absolute;
+            left: 0;
+            color: var(--color-gold);
+        }
+
+        /* ==========================================
+           10. フッター (SNSリンク)
+           ========================================== */
+        footer {
+            background: #05010a;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(209, 196, 233, 0.1);
+        }
+        .sns-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        .sns-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(209, 196, 233, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.3rem;
+            color: var(--color-lavender);
+            transition: all var(--transition-speed);
+        }
+        .sns-icon:hover {
+            color: var(--color-gold);
+            border-color: var(--color-gold);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(223, 183, 85, 0.2);
+        }
+        .copyright {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+        }
+
+        /* ==========================================
+           11. レスポンシブ対応 (スマートフォン最適化)
+           ========================================== */
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: 60px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 60px);
+                background: rgba(10, 3, 20, 0.95);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                align-items: center;
+                padding-top: 50px;
+                gap: 35px;
+                transition: var(--transition-speed);
+            }
+            .nav-menu.active {
+                left: 0;
+            }
+            .menu-toggle {
+                display: flex;
+            }
+            /* ハンバーガーメニューのアニメーション */
+            .menu-toggle.active span:nth-child(1) {
+                transform: translateY(7px) rotate(45deg);
+            }
+            .menu-toggle.active span:nth-child(2) {
+                opacity: 0;
+            }
+            .menu-toggle.active span:nth-child(3) {
+                transform: translateY(-7px) rotate(-45deg);
+            }
+            .live-title {
+                font-size: 1.8rem;
+            }
+            .outline-table th, .outline-table td {
+                display: block;
+                width: 100%;
+                padding: 10px 0;
+            }
+            .outline-table th {
+                border-bottom: none;
+                padding-bottom: 2px;
+            }
+            .outline-table tr {
+                padding: 10px 0;
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nebula-bg"></div>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">VSINGER LIVE</div>
+            <div class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#top">TOP</a></li>
+                <li><a href="#concept">CONCEPT</a></li>
+                <li><a href="#outline">OUTLINE</a></li>
+                <li><a href="#ticket">TICKET</a></li>
+                <li><a href="#goods">GOODS</a></li>
+                <li><a href="#attention">ATTENTION</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <section id="top">
+        <div class="main-visual-space">
+            【ここにメインビジュアル画像（16:9推奨）を設置】
+            </div>
+        <h1 class="live-title">Vsinger 1st One-Man Live<br>「Gilded Angel」</h1>
+        <p class="live-date">2026.XX.XX / AT SPECIAL HALL</p>
+    </section>
+
+    <section id="concept">
+        <h2 class="section-title">CONCEPT</h2>
+        <div class="section-subtitle">世界観・メッセージ</div>
+        <div class="concept-card">
+            <p class="concept-text">ここにライブのコンセプトテキストが入ります。</p>
+            <p class="concept-text">天使の羽が舞い降りる夜、星の海を震わせる歌声が響き渡る。<br>あなたと共に歩んだ軌跡を結実させる、特別なワンマンステージ。</p>
+        </div>
+    </section>
+
+    <section id="outline">
+        <h2 class="section-title">OUTLINE</h2>
+        <div class="section-subtitle">開催概要</div>
+        <table class="outline-table">
+            <tr>
+                <th>日時</th>
+                <td>2026年XX月XX日(土) 開場 17:00 / 開演 18:00</td>
+            </tr>
+            <tr>
+                <th>会場</th>
+                <td>〇〇スペシャルホール（東京都〇〇区1-2-3）</td>
+            </tr>
+            <tr>
+                <th>出演者</th>
+                <td>【Vsinger名】</td>
+            </tr>
+            <tr>
+                <th>主催</th>
+                <td>〇〇プロジェクト</td>
+            </tr>
+        </table>
+    </section>
+
+    <section id="ticket">
+        <h2 class="section-title">TICKET</h2>
+        <div class="section-subtitle">チケット情報</div>
+        <div class="ticket-grid">
+            <div class="ticket-card premium">
+                <div class="ticket-name">プレミアムチケット</div>
+                <div class="ticket-price">¥10,000</div>
+                <div class="ticket-benefit">
+                    ・前方限定席確約<br>
+                    ・限定非売品グッズ（特製アクリルスタンド）付き<br>
+                    ・終演後デジタルメッセージカード配布
+                </div>
+                <a href="#" class="btn">購入ページへ</a>
+            </div>
+            <div class="ticket-card">
+                <div class="ticket-name">一般チケット</div>
+                <div class="ticket-price">¥5,500</div>
+                <div class="ticket-benefit">
+                    ・通常指定席<br>
+                    ・ライブ公式パンフレット（デジタル版）付き
+                </div>
+                <a href="#" class="btn">購入ページへ</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="goods">
+        <h2 class="section-title">GOODS</h2>
+        <div class="section-subtitle">グッズラインナップ</div>
+        <div class="goods-grid">
+            <div class="goods-item">
+                <div class="goods-thumb">【GOODS IMAGE】</div>
+                <div class="goods-name">ライブ公式Tシャツ</div>
+                <div class="goods-price">¥3,500</div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-thumb">【GOODS IMAGE】</div>
+                <div class="goods-name">マフラータオル</div>
+                <div class="goods-price">¥2,000</div>
+            </div>
+            <div class="goods-item">
+                <div class="goods-thumb">【GOODS IMAGE】</div>
+                <div class="goods-name">ランダム缶バッジ（全5種）</div>
+                <div class="goods-price">¥500</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="attention">
+        <h2 class="section-title">ATTENTION</h2>
+        <div class="section-subtitle">ご来場にあたっての注意事項</div>
+        <div class="attention-box">
+            <ul class="attention-list">
+                <li>会場内での写真撮影・録音・録画は固くお断りいたします。</li>
+                <li>お祝い花（フラワースタンド等）のご送付に関しては、後日公式Xにて詳細をアナウンスいたします。</li>
+                <li>近隣住民へのご迷惑となりますので、徹夜での待機行為はご遠慮ください。</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <div class="sns-links">
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="sns-icon" aria-label="X">
+                <i class="fa-brands fa-x-twitter"></i>
+            </a>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="sns-icon" aria-label="YouTube">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+            <a href="https://lit.link" target="_blank" rel="noopener noreferrer" class="sns-icon" aria-label="lit.link">
+                <i class="fa-solid fa-link"></i>
+            </a>
+        </div>
+        <p class="copyright">&copy; 2026 VSINGER LIVE Project. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navMenu = document.querySelector('.nav-menu');
+
+        // ハンバーガーメニューの開閉
+        mobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // メニューリンクをクリックした際にスマホメニューを自動で閉じる
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>
