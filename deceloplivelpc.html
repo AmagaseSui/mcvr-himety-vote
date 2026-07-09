@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>夢羽ヒメ ワンマンライブ「Celestial Wing」| 特設サイト</title>
-<meta name="description" content="夢羽ヒメ ワンマンライブ「Celestial Wing」特設サイト。日時・会場・チケット情報はこちら。">
+<title>夢羽ヒメ ワンマンライブ「Miracle World」| 特設サイト</title>
+<meta name="description" content="夢羽ヒメ 1stワンマンライブ「Miracle World」特設サイト。日時・会場・チケット情報はこちら。">
 
 <!-- ============================================================
      フォント読み込み（和文見出し用:Shippori Mincho / 本文用:Noto Sans JP）
@@ -380,10 +380,10 @@ footer{
     <span class="placeholder-label">MAIN VISUAL 1920×1080<br>ここにライブキービジュアルを挿入</span>
   </div>
 
-  <h1 class="hero-title" id="liveTitle">Celestial Wing</h1>
-  <p class="hero-sub" id="liveCatch">羽ばたきは、まだ止まらない。</p>
-  <p class="hero-date" id="liveDate">2026.10.18 SUN</p>
-  <p class="hero-venue" id="liveVenue">品川インターシティホール</p>
+  <h1 class="hero-title" id="liveTitle">Miracle World</h1>
+  <p class="hero-sub" id="liveCatch">ここでしか見られない、奇跡の世界へ</p>
+  <p class="hero-date" id="liveDate">2026.10.10 SAT</p>
+  <p class="hero-venue" id="liveVenue">LIVE SPACE Q</p>
 
   <a href="#ticket" class="btn btn-primary">チケット情報を見る</a>
 
@@ -395,15 +395,14 @@ footer{
   <div class="section-inner">
     <p class="eyebrow">Concept</p>
     <p class="concept-lead" id="conceptLead">
-      小さな声も、大きな歌声も。<br>全部が、彼女の翼になる。
+      初披露の3Dモデルで送る<br>1st ワンマンライブ
     </p>
     <div class="divider"></div>
     <p class="concept-body" id="conceptBody">
       デビューから積み重ねてきた歌声と物語を、一夜だけのステージに。
       夢羽ヒメというひとりのVSingerが持つ「可憐さ」と「圧倒的な歌唱力」、
-      そのコントラストを最も近い距離で体感できる時間をお届けします。
-      ここでしか聴けないアレンジ、ここでしか見られない表情。
-      あなたの記憶に残る一夜になりますように。
+      そのコントラストを最も近い距離で体感できる時間です。
+      ここでしか聴けないパフォーマンス、ぜひご体験ください。
     </p>
   </div>
 </section>
@@ -484,67 +483,58 @@ footer{
 /* ---------------- 1. サイト全体の設定値（ここを編集） ---------------- */
 const CONFIG = {
   vsingerName: "夢羽ヒメ",
-  liveTitle: "Celestial Wing",
-  liveCatch: "羽ばたきは、まだ止まらない。",
-  liveDateLabel: "2026.10.18 SUN",
-  liveVenueLabel: "品川インターシティホール",
+  liveTitle: "Miracle World",
+  liveCatch: "ここでしか見られない、奇跡の世界へ",
+  liveDateLabel: "2026.10.10 SAT",
+  liveVenueLabel: "LIVE SAPCE Q",
 
   concept: {
-    lead: "小さな声も、大きな歌声も。<br>全部が、彼女の翼になる。",
-    body: "デビューから積み重ねてきた歌声と物語を、一夜だけのステージに。夢羽ヒメというひとりのVSingerが持つ「可憐さ」と「圧倒的な歌唱力」、そのコントラストを最も近い距離で体感できる時間をお届けします。ここでしか聴けないアレンジ、ここでしか見られない表情。あなたの記憶に残る一夜になりますように。"
+    lead: "初披露の3Dモデルで送る<br>1st ワンマンライブ",
+    body: "デビューから積み重ねてきた歌声と物語を、一夜だけのステージに。夢羽ヒメというひとりのVSingerが持つ「可憐さ」と「圧倒的な歌唱力」、そのコントラストを最も近い距離で体感できる時間をお届けします。ここでしか聴けないパフォーマンス、ぜひご体験ください。"
   },
 
   // ゲスト出演者情報（写真を使う場合は photo に画像パスを指定）
   guest: {
     role: "SPECIAL GUEST",
-    name: "神代アオイ",
-    desc: "同事務所所属のVSinger。透明感のある歌声と繊細なピアノ弾き語りが持ち味。",
-    comment: "ヒメちゃんのステージに呼んでもらえて光栄です。二人だけの特別なコラボ曲もお届けします、楽しみにしていてください。",
+    name: "春歌みこと",
+    desc: "シアーミュージックV所属　トップオブリア充を目指すVsinger",
+    comment: "",
     photo: "" // 例: "images/guest-aoi.jpg"
   },
 
   // 開催概要（dt: 項目名 / dd: 内容 / note: 補足）
   outline: [
-    { dt: "DATE",   dd: "2026年10月18日（日）", note: "開場 17:00 / 開演 18:00 / 終演 20:00（予定）" },
-    { dt: "VENUE",  dd: "品川インターシティホール", note: "東京都港区港南2-15-2" },
-    { dt: "ACCESS", dd: "JR「品川駅」港南口より徒歩5分" },
-    { dt: "主催",    dd: "夢羽ヒメプロジェクト運営事務局" },
-    { dt: "配信",    dd: "ZAIKO にてアーカイブ配信あり", note: "配信視聴チケットは別途販売" }
+    { dt: "DATE",   dd: "2026年10月10日（土）", note: "開場 18:15 / 開演 19:15" },
+    { dt: "VENUE",  dd: "LIVE SPACE Q", note: "東京都千代田区外神田４丁目 4-3 SILビル 9F" },
+    { dt: "ACCESS", dd: "JR「秋葉原駅」電気街口より徒歩7分" },
+    { dt: "配信",    dd: "Bitfan にてアーカイブ配信あり", note: "配信視聴チケットは別途販売" }
   ],
 
   // チケット種別（featured: trueで「おすすめ」バッジ表示）
   tickets: [
-    { name: "一般指定席", desc: "会場での通常観覧チケット", price: "8,800", featured:false },
-    { name: "FC先行 指定席", desc: "ファンクラブ会員限定・先行受付", price: "8,800", featured:true },
-    { name: "配信視聴チケット", desc: "自宅から生配信＆1週間アーカイブ視聴", price: "3,300", featured:false }
+    { name: "ロイヤルひめにてぃチケット", desc: "S席＆グッズ付き（直筆サイン入りポストカード含む）", price: "15,800", featured:true },
+    { name: "一般チケット", desc: "会場での通常観覧チケット。先行チケットの場合(7/10～7/29)直筆サイン入りポストカード付", price: "5,000", featured:false }
   ],
 
   // 物販グッズ（thumbLabelは画像未挿入時のプレースホルダー文言）
   goods: [
-    { name: "アクリルスタンド", price: "2,200", thumbLabel:"IMG" },
-    { name: "ライブTシャツ", price: "4,500", thumbLabel:"IMG" },
-    { name: "ペンライト", price: "3,300", thumbLabel:"IMG" },
-    { name: "パンフレット", price: "1,500", thumbLabel:"IMG" }
+    { name: "ComminSoon", price: "0", thumbLabel:"IMG" }
   ],
 
   // 注意事項
   attentions: [
-    "チケットの転売・譲渡は固くお断りいたします。転売サイト等で購入されたチケットでのご入場はお断りする場合があります。",
-    "会場内での撮影・録音・録画は禁止です。",
-    "体調不良等、無理のない範囲でのご来場・ご観覧をお願いいたします。",
-    "やむを得ない事情により、出演内容・タイムテーブルが変更となる場合がございます。",
-    "未就学児のご入場はご遠慮いただいております。"
+    ""
   ],
 
   // フッターSNSリンク（URLをご自身のアカウントに差し替えてください）
   sns: {
-    x: "https://x.com/example",
-    youtube: "https://www.youtube.com/@example",
-    litlink: "https://lit.link/example"
+    x: "https://x.com/hime_yumeha",
+    youtube: "https://www.youtube.com/@hime.yumeha",
+    litlink: "https://lit.link/HimeYumeha"
   },
 
   copyrightYear: 2026,
-  projectName: "Yumeha Hime Project"
+  projectName: ""
 };
 
 /* ---------------- 2. CONFIGをDOMへ反映 ---------------- */
