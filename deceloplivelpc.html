@@ -163,9 +163,9 @@ h2.section-title{
 }
 @keyframes halo-pulse{ 0%,100%{ opacity:.7; transform:translate(-50%,-50%) scale(1);} 50%{ opacity:1; transform:translate(-50%,-50%) scale(1.06);} }
 
-/* ライブメインビジュアル差し込み枠：src差し替え、または background画像に変更可 */
+/* ライブメインビジュアル差し込み枠（1920×1080 / 16:9）：src差し替え、または background画像に変更可 */
 .hero-visual{
-  width:min(78vw,300px); aspect-ratio:3/4; margin:0 auto 32px;
+  width:min(92vw,720px); aspect-ratio:16/9; margin:0 auto 32px;
   border-radius:var(--radius-l);
   border:1px solid var(--panel-border);
   background:
@@ -226,6 +226,34 @@ h2.section-title{
 .divider{
   width:1px; height:60px; margin:40px auto;
   background:linear-gradient(var(--gold), transparent);
+}
+
+/* ---------------- GUEST ---------------- */
+.guest{ padding:var(--space-section) 0; }
+.guest-card{
+  display:flex; flex-direction:column; gap:26px;
+  background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:var(--radius-l);
+  padding:clamp(24px,4vw,40px); align-items:center; text-align:center;
+}
+@media(min-width:700px){
+  .guest-card{ flex-direction:row; text-align:left; align-items:flex-start; gap:36px; }
+}
+.guest-photo{
+  width:160px; height:160px; flex-shrink:0; border-radius:50%; overflow:hidden;
+  border:1px solid var(--panel-border);
+  background:linear-gradient(160deg, rgba(182,163,232,0.16), rgba(216,177,104,0.08)), var(--bg-nebula-1);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 0 40px rgba(182,163,232,0.2);
+}
+.guest-photo img{ width:100%; height:100%; object-fit:cover; }
+.guest-photo span{ font-family:var(--font-en); font-style:italic; color:var(--text-sub); font-size:12px; }
+.guest-body{ flex:1; }
+.guest-role{ font-family:var(--font-en); font-style:italic; letter-spacing:.1em; color:var(--gold); font-size:13px; margin-bottom:6px; }
+.guest-name{ font-family:var(--font-display); font-size:22px; color:var(--lavender-soft); margin-bottom:14px; letter-spacing:.04em; }
+.guest-desc{ font-size:14px; color:var(--text-sub); margin-bottom:16px; }
+.guest-comment{
+  font-size:13.5px; color:var(--text-main); padding-left:16px;
+  border-left:2px solid var(--gold); line-height:1.9;
 }
 
 /* ---------------- OUTLINE ---------------- */
@@ -346,10 +374,10 @@ footer{
   <p class="hero-eyebrow">ONEMAN LIVE</p>
   <p class="hero-name" id="vsingerName">夢羽ヒメ</p>
 
-  <!-- ライブメインビジュアル差し込み枠：
+  <!-- ライブメインビジュアル差し込み枠（1920×1080 / 16:9 想定）：
        画像を使う場合は <img src="images/main-visual.jpg" alt="..."> に置き換えてください -->
   <div class="hero-visual" id="mainVisual">
-    <span class="placeholder-label">MAIN VISUAL<br>ここにライブキービジュアルを挿入</span>
+    <span class="placeholder-label">MAIN VISUAL 1920×1080<br>ここにライブキービジュアルを挿入</span>
   </div>
 
   <h1 class="hero-title" id="liveTitle">Celestial Wing</h1>
@@ -377,6 +405,15 @@ footer{
       ここでしか聴けないアレンジ、ここでしか見られない表情。
       あなたの記憶に残る一夜になりますように。
     </p>
+  </div>
+</section>
+
+<!-- ================= GUEST（メニューには含めない単独セクション） ================= -->
+<section class="guest" id="guest">
+  <div class="section-inner">
+    <p class="eyebrow">Guest</p>
+    <h2 class="section-title">ゲスト出演</h2>
+    <div class="guest-card reveal" id="guestCard"><!-- JSで自動生成 --></div>
   </div>
 </section>
 
@@ -457,6 +494,15 @@ const CONFIG = {
     body: "デビューから積み重ねてきた歌声と物語を、一夜だけのステージに。夢羽ヒメというひとりのVSingerが持つ「可憐さ」と「圧倒的な歌唱力」、そのコントラストを最も近い距離で体感できる時間をお届けします。ここでしか聴けないアレンジ、ここでしか見られない表情。あなたの記憶に残る一夜になりますように。"
   },
 
+  // ゲスト出演者情報（写真を使う場合は photo に画像パスを指定）
+  guest: {
+    role: "SPECIAL GUEST",
+    name: "神代アオイ",
+    desc: "同事務所所属のVSinger。透明感のある歌声と繊細なピアノ弾き語りが持ち味。",
+    comment: "ヒメちゃんのステージに呼んでもらえて光栄です。二人だけの特別なコラボ曲もお届けします、楽しみにしていてください。",
+    photo: "" // 例: "images/guest-aoi.jpg"
+  },
+
   // 開催概要（dt: 項目名 / dd: 内容 / note: 補足）
   outline: [
     { dt: "DATE",   dd: "2026年10月18日（日）", note: "開場 17:00 / 開演 18:00 / 終演 20:00（予定）" },
@@ -524,7 +570,25 @@ function renderText(){
   document.getElementById("linkLit").href = CONFIG.sns.litlink;
 }
 
-/* ---------------- 3. 開催概要テーブルの自動生成 ---------------- */
+/* ---------------- 3. ゲスト紹介カードの自動生成 ---------------- */
+function renderGuest(){
+  const g = CONFIG.guest;
+  const wrap = document.getElementById("guestCard");
+  const photoInner = g.photo
+    ? `<img src="${g.photo}" alt="${g.name}">`
+    : `<span>PHOTO</span>`;
+  wrap.innerHTML = `
+    <div class="guest-photo">${photoInner}</div>
+    <div class="guest-body">
+      <p class="guest-role">${g.role}</p>
+      <p class="guest-name">${g.name}</p>
+      <p class="guest-desc">${g.desc}</p>
+      <p class="guest-comment">${g.comment}</p>
+    </div>
+  `;
+}
+
+/* ---------------- 4. 開催概要テーブルの自動生成 ---------------- */
 function renderOutline(){
   const wrap = document.getElementById("outlineTable");
   wrap.innerHTML = CONFIG.outline.map(item => `
@@ -535,7 +599,7 @@ function renderOutline(){
   `).join("");
 }
 
-/* ---------------- 4. チケットカードの自動生成 ---------------- */
+/* ---------------- 5. チケットカードの自動生成 ---------------- */
 function renderTickets(){
   const wrap = document.getElementById("ticketGrid");
   wrap.innerHTML = CONFIG.tickets.map(t => `
@@ -547,7 +611,7 @@ function renderTickets(){
   `).join("");
 }
 
-/* ---------------- 5. 物販グッズの自動生成 ---------------- */
+/* ---------------- 6. 物販グッズの自動生成 ---------------- */
 function renderGoods(){
   const wrap = document.getElementById("goodsGrid");
   wrap.innerHTML = CONFIG.goods.map(g => `
@@ -561,7 +625,7 @@ function renderGoods(){
   `).join("");
 }
 
-/* ---------------- 6. 注意事項リストの自動生成 ---------------- */
+/* ---------------- 7. 注意事項リストの自動生成 ---------------- */
 function renderAttention(){
   const wrap = document.getElementById("attentionList");
   wrap.innerHTML = CONFIG.attentions.map(text => `
@@ -569,7 +633,7 @@ function renderAttention(){
   `).join("");
 }
 
-/* ---------------- 7. ハンバーガーメニュー開閉 ---------------- */
+/* ---------------- 8. ハンバーガーメニュー開閉 ---------------- */
 function initNavToggle(){
   const toggle = document.getElementById("navToggle");
   const drawer = document.getElementById("navDrawer");
@@ -583,7 +647,7 @@ function initNavToggle(){
   drawer.querySelectorAll("a").forEach(a => a.addEventListener("click", closeDrawer));
 }
 
-/* ---------------- 8. スクロール出現アニメーション ---------------- */
+/* ---------------- 9. スクロール出現アニメーション ---------------- */
 function initReveal(){
   const targets = document.querySelectorAll(".reveal");
   const io = new IntersectionObserver((entries) => {
@@ -594,7 +658,7 @@ function initReveal(){
   targets.forEach(t => io.observe(t));
 }
 
-/* ---------------- 9. 星空背景（軽量Canvas描画） ---------------- */
+/* ---------------- 10. 星空背景（軽量Canvas描画） ---------------- */
 function initStarfield(){
   const container = document.getElementById("stars");
   const canvas = document.createElement("canvas");
@@ -644,7 +708,7 @@ function initStarfield(){
   }
 }
 
-/* ---------------- 10. 漂う光の粒（天使の羽イメージ） ---------------- */
+/* ---------------- 11. 漂う光の粒（天使の羽イメージ） ---------------- */
 function initFeathers(){
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (prefersReduced) return; // モーション低減設定時は省略
@@ -663,6 +727,7 @@ function initFeathers(){
 /* ---------------- 初期化 ---------------- */
 document.addEventListener("DOMContentLoaded", () => {
   renderText();
+  renderGuest();
   renderOutline();
   renderTickets();
   renderGoods();
